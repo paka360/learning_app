@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Edu-Learn — Mobile App</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+/* ============================================================
+   EDU-LEARN — Design Tokens
+   ============================================================ */
+:root {
+  /* Warm ink */
+  --ink-900: #2A2018;
+  --ink-700: #4A3D31;
+  --ink-500: #7A6A58;
+  --ink-400: #9C8B77;
+  --ink-300: #C2B4A0;
+
+  /* Warm surfaces */
+  --paper:    #FBF6EE;
+  --surface:  #FFFDF9;
+  --sand-100: #F4EADB;
+  --sand-200: #E9DAC4;
+  --sand-300: #DAC6A8;
+  --sand-400: #C8B093;
+
+  /* Brand accents */
+  --clay-600: #A8541F;
+  --clay-500: #C2662F;
+  --clay-100: #F6E4D6;
+  --marigold-500: #E5A13A;
+  --marigold-100: #FBEACB;
+  --sage-600: #3E6749;
+  --sage-500: #4E7C5A;
+  --sage-100: #DFEBE0;
+
+  /* Subject colours */
+  --subj-english:       #C2662F;
+  --subj-english-100:   #F6E4D6;
+  --subj-maths:         #4E7C5A;
+  --subj-maths-100:     #DFEBE0;
+  --subj-science:       #2E7D86;
+  --subj-science-100:   #D6EBED;
+  --subj-social:        #D98E2B;
+  --subj-social-100:    #FBEACB;
+  --subj-story:         #8A5A7A;
+  --subj-story-100:     #EEE0EA;
+
+  /* Semantic */
+  --success:     #4E7C5A;
+  --success-100: #DFEBE0;
+  --warning:     #D98E2B;
+  --warning-100: #FBEACB;
+  --danger:      #C0432F;
+  --danger-100:  #F7DED6;
+
+  /* Semantic aliases */
+  --bg:          var(--paper);
+  --fg1:         var(--ink-900);
+  --fg2:         var(--ink-700);
+  --fg3:         var(--ink-500);
+  --card-bg:     var(--surface);
+  --card-border: var(--sand-300);
+  --divider:     var(--sand-200);
+  --primary:     var(--clay-500);
+  --on-primary:  #FFFFFF;
+
+  /* Radii */
+  --r-xs:   6px;
+  --r-sm:   10px;
+  --r-md:   14px;
+  --r-lg:   20px;
+  --r-xl:   28px;
+  --r-pill: 999px;
+
+  /* Spacing (4pt scale) */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+
+  /* Shadows (warm-tinted) */
+  --shadow-xs:      0 1px 2px rgba(74,61,49,.06);
+  --shadow-sm:      0 2px 6px rgba(74,61,49,.08);
+  --shadow-md:      0 6px 18px rgba(74,61,49,.10);
+  --shadow-lg:      0 14px 36px rgba(74,61,49,.14);
+  --shadow-primary: 0 8px 20px rgba(194,102,47,.28);
+
+  /* Type families */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body:    'Hanken Grotesk', system-ui, sans-serif;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  background: #EFE6D7;
+  background-image:
+    radial-gradient(circle at 20% 18%, var(--marigold-100), transparent 42%),
+    radial-gradient(circle at 84% 82%, var(--sage-100), transparent 46%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 28px;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font-family: var(--font-body); cursor: pointer; }
+input  { font-family: var(--font-body); }
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ============================================================
+   PHONE SHELL
+   ============================================================ */
+#root { transform-origin: center; }
+
+.phone {
+  width: 390px;
+  height: 844px;
+  background: var(--paper);
+  border-radius: 44px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 40px 90px rgba(74,61,49,.28),
+    0 0 0 11px #15110D,
+    0 0 0 13px #2a2018;
+}
+
+/* ============================================================
+   STATUS BAR
+   ============================================================ */
+.status-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  color: var(--ink-900);
+  font-weight: 700;
+  font-size: 15px;
+  pointer-events: none;
+  font-family: var(--font-display);
+}
+.status-bar .status-icons { display: flex; gap: 6px; align-items: center; }
+
+/* ============================================================
+   SCREEN SCAFFOLD
+   ============================================================ */
+.screen {
+  position: absolute;
+  inset: 0;
+  top: 52px;
+  overflow-y: auto;
+  background: var(--paper);
+  -webkit-overflow-scrolling: touch;
+  display: none;
+}
+.screen.active { display: block; }
+.screen-pad { padding: 0 20px 120px; }
+.screen-pad-nopad { padding: 0 0 120px; }
+
+/* ============================================================
+   APP BAR
+   ============================================================ */
+.app-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0 16px;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(var(--paper) 70%, transparent);
+  z-index: 20;
+}
+.app-bar-title     { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -.01em; color: var(--ink-900); }
+.app-bar-subtitle  { font-size: 13px; color: var(--fg3); margin-top: 1px; }
+
+/* ============================================================
+   ICON BUTTON
+   ============================================================ */
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--sand-300);
+  background: var(--surface);
+  color: var(--ink-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.icon-btn:hover { background: var(--sand-100); }
+.icon-btn.active {
+  background: var(--clay-100);
+  color: var(--clay-600);
+  border-color: var(--clay-100);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: transform .12s, background .15s, box-shadow .15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn-sm  { padding: 9px 16px; font-size: 14px; }
+.btn-md  { padding: 13px 22px; }
+.btn-lg  { padding: 16px 24px; font-size: 17px; }
+.btn-full { width: 100%; }
+
+.btn-primary  { background: var(--clay-500); color: #fff; box-shadow: var(--shadow-primary); }
+.btn-primary:active { background: var(--clay-600); }
+.btn-secondary { background: var(--sand-200); color: var(--ink-900); }
+.btn-outline  { background: var(--surface); color: var(--ink-900); border: 1px solid var(--sand-300); }
+.btn-ghost    { background: transparent; color: var(--clay-500); }
+.btn-sage     { background: var(--sage-500); color: #fff; }
+.btn-disabled { background: var(--sand-100); color: var(--ink-400); box-shadow: none; pointer-events: none; }
+
+/* ============================================================
+   FORM FIELDS
+   ============================================================ */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--fg2); }
+.field-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--sand-300);
+  border-radius: 12px;
+  padding: 13px 14px;
+  transition: border .15s, box-shadow .15s;
+}
+.field-box:focus-within {
+  border-color: var(--clay-500);
+  box-shadow: 0 0 0 3px var(--clay-100);
+}
+.field-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  font-size: 15px;
+  color: var(--ink-900);
+}
+.field-hint { font-size: 12px; color: var(--fg3); }
+
+/* ============================================================
+   CHIPS & BADGES
+   ============================================================ */
+.chip {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--sand-300);
+  background: var(--surface);
+  color: var(--ink-700);
+  white-space: nowrap;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.chip.selected, .chip:hover {
+  background: var(--clay-500);
+  color: #fff;
+  border-color: var(--clay-500);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--sand-300);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+}
+.card-clickable { cursor: pointer; transition: box-shadow .15s; }
+.card-clickable:hover { box-shadow: var(--shadow-md); }
+
+/* ============================================================
+   BOOK COVER
+   ============================================================ */
+.book-cover {
+  border-radius: 9px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset -8px 0 14px rgba(0,0,0,.12), var(--shadow-xs);
+}
+.book-cover::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
+  background: rgba(0,0,0,.18);
+}
+.book-cover-md { width: 52px; height: 70px; border-radius: 9px; }
+.book-cover-lg { width: 84px; height: 112px; border-radius: 12px; }
+.book-cover-sm { width: 40px; height: 54px; border-radius: 8px; }
+
+/* ============================================================
+   BOTTOM SHEET
+   ============================================================ */
+.sheet-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  display: none;
+}
+.sheet-overlay.open { display: flex; }
+.sheet-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(42,32,24,.32);
+}
+.sheet-panel {
+  position: relative;
+  width: 100%;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px 28px;
+  box-shadow: var(--shadow-lg);
+  animation: sheetUp .24s cubic-bezier(.22,.61,.36,1);
+}
+.sheet-handle {
+  width: 40px; height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--sand-300);
+  margin: 0 auto 14px;
+}
+.sheet-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--ink-900); margin-bottom: 14px; }
+
+/* ============================================================
+   TAB BAR
+   ============================================================ */
+.tab-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  padding: 10px 14px 24px;
+  background: linear-gradient(transparent, var(--paper) 32%);
+}
+.tab-bar-inner {
+  background: var(--surface);
+  border: 1px solid var(--sand-200);
+  border-radius: 22px;
+  box-shadow: var(--shadow-md);
+  padding: 8px 6px;
+  display: flex;
+  justify-content: space-around;
+}
+.tab-btn {
+  border: none;
+  background: transparent;
+  border-radius: 13px;
+  padding: 7px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--ink-400);
+  font-size: 10px;
+  font-weight: 700;
+  transition: background .12s, color .12s;
+}
+.tab-btn.active {
+  background: var(--clay-100);
+  color: var(--clay-600);
+}
+.tab-btn i { display: block; }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--fg3);
+}
+.empty-icon-wrap {
+  width: 64px; height: 64px;
+  border-radius: 20px;
+  background: var(--sand-100);
+  margin: 0 auto 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.empty-title { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--ink-700); }
+.empty-text  { font-size: 14px; margin-top: 4px; max-width: 240px; margin-left: auto; margin-right: auto; }
+
+/* ============================================================
+   SECTION TITLE
+   ============================================================ */
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink-900);
+  margin: 22px 0 12px;
+}
+
+/* ============================================================
+   SEGMENTED CONTROL
+   ============================================================ */
+.seg-control {
+  display: flex;
+  gap: 6px;
+  background: var(--sand-100);
+  padding: 4px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+.seg-btn {
+  flex: 1;
+  border: none;
+  border-radius: 11px;
+  padding: 9px 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: transparent;
+  color: var(--ink-500);
+  transition: background .12s, color .12s, box-shadow .12s;
+}
+.seg-btn.active {
+  background: var(--surface);
+  color: var(--clay-600);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ============================================================
+   TOGGLE SWITCH
+   ============================================================ */
+.toggle {
+  width: 46px; height: 28px;
+  border-radius: var(--r-pill);
+  border: none;
+  position: relative;
+  transition: background .2s;
+}
+.toggle.on  { background: var(--sage-500); }
+.toggle.off { background: var(--sand-300); }
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  width: 22px; height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  transition: left .2s;
+  box-shadow: var(--shadow-xs);
+}
+.toggle.on  .toggle-thumb { left: 21px; }
+.toggle.off .toggle-thumb { left: 3px; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.progress-bar { height: 7px; border-radius: var(--r-pill); background: var(--sand-200); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: var(--r-pill); background: var(--clay-500); transition: width .3s; }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ============================================================
+   LOGO
+   ============================================================ */
+.logo { display: flex; align-items: center; gap: 13px; }
+.logo-mark {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--clay-500);
+  box-shadow: var(--shadow-primary);
+  border-radius: 16px;
+}
+.logo-mark-lg { width: 56px; height: 56px; border-radius: 16px; }
+.logo-mark-md { width: 46px; height: 46px; border-radius: 13px; }
+.logo-text { font-family: var(--font-display); font-weight: 800; letter-spacing: -.02em; color: var(--ink-900); }
+.logo-text span { color: var(--clay-500); }
+.logo-text-lg { font-size: 34px; }
+.logo-text-md { font-size: 27px; }
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+.flex       { display: flex; }
+.flex-col   { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-8  { gap: 8px; }
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.gap-14 { gap: 14px; }
+.gap-16 { gap: 16px; }
+.flex-1 { flex: 1; }
+.w-full { width: 100%; }
+.text-center { text-align: center; }
+.mt-4  { margin-top: 4px; }
+.mt-6  { margin-top: 6px; }
+.mt-8  { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-18 { margin-top: 18px; }
+.mt-20 { margin-top: 20px; }
+.mt-22 { margin-top: 22px; }
+.mt-24 { margin-top: 24px; }
+.mb-4  { margin-bottom: 4px; }
+.mb-6  { margin-bottom: 6px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-14 { margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<div id="root">
+<!-- Phone shell injected by JS -->
+</div>
+
+<script>
+/* ============================================================
+   SEED DATA
+   ============================================================ */
+const SUBJECTS = {
+  English:          { color: 'var(--subj-english)',  tint: 'var(--subj-english-100)',  icon: 'book-open' },
+  Mathematics:      { color: 'var(--subj-maths)',    tint: 'var(--subj-maths-100)',    icon: 'calculator' },
+  Science:          { color: 'var(--subj-science)',  tint: 'var(--subj-science-100)',  icon: 'flask-conical' },
+  'Social Studies': { color: 'var(--subj-social)',   tint: 'var(--subj-social-100)',   icon: 'globe' },
+  Story:            { color: 'var(--subj-story)',    tint: 'var(--subj-story-100)',    icon: 'sparkles' },
+};
+
+const BOOKS = [
+  { id: 1, title: 'Golden English', author: 'Okyere Baafi Alexander', grade: 'Grade 4', subject: 'English', pages: 86,
+    content: 'English teaches you the rules of the English language — how words join to make sentences, and how sentences carry meaning.\n\nA sentence begins with a capital letter and ends with a full stop. The naming part is the subject, and the doing part is the verb.\n\n"Paka reads a book." Here, "Paka" is the subject and "reads" is the verb. Try writing three sentences about your school day.' },
+  { id: 2, title: 'Aki Ola Mathematics', author: 'Peter Asiedu', grade: 'Grade 4', subject: 'Mathematics', pages: 120,
+    content: 'Mathematics is all about numbers and the patterns they make.\n\nWhen we multiply, we add a number to itself many times. 4 × 3 means three groups of four: 4 + 4 + 4 = 12.\n\nPractice: a market trader packs mangoes in baskets of 6. How many mangoes are in 5 baskets? Work it out before you turn the page.' },
+  { id: 3, title: 'Flamingo Social Studies', author: 'Ahmed Ibrahim', grade: 'Grade 4', subject: 'Social Studies', pages: 74,
+    content: 'Social Studies teaches us about our environment, our leaders and how people live together.\n\nGhana is divided into regions, and each region has towns and villages. People in a community share resources like water, roads and markets.\n\nThink about your own community. Who keeps it clean? Who keeps it safe? Everyone has a part to play.' },
+  { id: 4, title: 'In Scope Integrated Science', author: 'K.D Twumasi', grade: 'Grade 4', subject: 'Science', pages: 98,
+    content: 'Science helps us understand the world — plants, animals, water and weather.\n\nLiving things grow, feed and reproduce. A mango tree is a living thing; a stone is not.\n\nWater can be a solid (ice), a liquid (what you drink) or a gas (steam). Heat changes water from one state to another.' },
+  { id: 5, title: "Paka's Big Adventure", author: 'Pka', grade: 'All grades', subject: 'Story', pages: 32,
+    content: 'Paka the cat was bored out of his mind. The rain had kept him inside for three whole days.\n\nSo Paka opened a book — and tumbled straight into its pages! Suddenly he was sailing a paper boat down a river of words.\n\n"Adventure," he purred, "was here all along."' },
+  { id: 6, title: 'Gateway to English Grammar', author: 'Abena Mensah', grade: 'Grade 4', subject: 'English', pages: 64,
+    content: 'Nouns name people, places and things. Verbs are doing words.\n\nIn "The teacher rings the bell," which word is the verb? Underline it in your exercise book.' },
+  { id: 7, title: 'Mental Maths Drills', author: 'Boatemaa Asantewaa', grade: 'Grade 4', subject: 'Mathematics', pages: 48,
+    content: 'Quick maths makes a sharp mind. Try to answer before the count of three.\n\n7 + 8 = ?   9 × 4 = ?   20 − 6 = ?' },
+  { id: 8, title: 'Our Region, Our Home', author: 'Kwabena Yeboah', grade: 'Grade 4', subject: 'Social Studies', pages: 56,
+    content: 'Every region of Ghana has its own festivals, foods and farms.\n\nWhat is special about the place you call home?' },
+];
+
+const QUIZZES = [
+  { id: 1, subject: 'Mathematics', title: 'Multiplication facts', grade: 'Grade 4', questions: [
+    { q: 'What is 6 × 7?', options: ['42','36','48','40'], answer: '42' },
+    { q: 'What is 9 × 4?', options: ['32','36','40','45'], answer: '36' },
+    { q: 'A basket holds 8 oranges. How many in 5 baskets?', options: ['40','45','35','48'], answer: '40' },
+    { q: 'What is 12 ÷ 3?', options: ['4','3','6','5'], answer: '4' },
+    { q: 'What is 7 × 8?', options: ['54','56','64','49'], answer: '56' },
+  ]},
+  { id: 2, subject: 'English', title: 'Nouns & verbs', grade: 'Grade 4', questions: [
+    { q: 'Which word is a noun?', options: ['run','school','quickly','happy'], answer: 'school' },
+    { q: 'Which word is a verb?', options: ['table','green','jump','slowly'], answer: 'jump' },
+    { q: 'A sentence ends with a ___.', options: ['comma','full stop','capital letter','space'], answer: 'full stop' },
+  ]},
+  { id: 3, subject: 'Science', title: 'Living things', grade: 'Grade 4', questions: [
+    { q: 'Which of these is a living thing?', options: ['Stone','Mango tree','Cup','Chair'], answer: 'Mango tree' },
+    { q: 'Ice is water in which state?', options: ['Solid','Liquid','Gas','Steam'], answer: 'Solid' },
+    { q: 'What do plants need to make food?', options: ['Sunlight','Darkness','Plastic','Sand'], answer: 'Sunlight' },
+  ]},
+];
+
+const QUIZ_HISTORY = [
+  { title: 'Living things', subject: 'Science', score: 3, total: 3 },
+  { title: 'Multiplication facts', subject: 'Mathematics', score: 4, total: 5 },
+];
+
+const CHILDREN = [
+  { name: 'Ama', grade: 'Grade 3', read: 8, minutes: 142, lastQuiz: 'Living things', score: '3/3', color: 'var(--subj-science)' },
+  { name: 'Kofi', grade: 'Grade 5', read: 14, minutes: 205, lastQuiz: 'Multiplication facts', score: '4/5', color: 'var(--subj-maths)' },
+];
+
+const ROLES = [
+  { id: 'student', label: 'Student', icon: 'graduation-cap', desc: 'Read, take quizzes & track progress' },
+  { id: 'teacher', label: 'Teacher', icon: 'briefcase', desc: 'Upload books & author quizzes' },
+  { id: 'parent',  label: 'Parent',  icon: 'heart-handshake', desc: 'Follow your child\'s learning' },
+];
+
+const PROFILES = {
+  student: { username: 'paka',   role: 'student', grade: 'Grade 4', name: 'Paka' },
+  teacher: { username: 'fun',    role: 'teacher', grade: 'Grade 4', name: 'Fun' },
+  parent:  { username: 'parent', role: 'parent',  grade: '',        name: 'Parent' },
+};
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+const App = {
+  phase: 'welcome',   // welcome | signin | signup | app
+  role:  'student',
+  user:  null,
+  tab:   'home',
+  stack: [],
+  lib: { downloads: [1, 4], favourites: [2, 5], continueReading: [1] },
+  quiz: { view: 'list', quiz: null, qi: 0, picked: null, score: 0 },
+  libSeg:  'all',
+  subject: 'All',
+  searchQ: '',
+  notif:   true,
+  teacherSheet: null,
+  parentChild: null,
+  linkSheet: false,
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function icon(name, size = 20, extraStyle = '') {
+  return `<i data-lucide="${name}" style="width:${size}px;height:${size}px;display:inline-flex;flex-shrink:0;${extraStyle}"></i>`;
+}
+
+function badge(text, color, bg, icn = '') {
+  return `<span class="badge" style="color:${color};background:${bg}">
+    ${icn ? icon(icn, 11, 'margin-right:2px') : ''}${text}
+  </span>`;
+}
+
+function bookCoverHTML(book, size = 'md') {
+  const s = SUBJECTS[book.subject] || SUBJECTS.Story;
+  const dims = {
+    lg: { w: 84, h: 112, r: 12, ic: 30 },
+    md: { w: 52, h: 70,  r:  9, ic: 22 },
+    sm: { w: 40, h: 54,  r:  8, ic: 18 },
+  }[size];
+  return `<div class="book-cover book-cover-${size}"
+    style="width:${dims.w}px;height:${dims.h}px;border-radius:${dims.r}px;background:${s.color}">
+    ${icon(s.icon, dims.ic, 'color:rgba(255,255,255,.92)')}
+  </div>`;
+}
+
+function logoHTML(size = 'md') {
+  const lg = size === 'lg';
+  return `<div class="logo">
+    <div class="logo-mark logo-mark-${size}">
+      ${icon('graduation-cap', lg ? 30 : 26, 'color:#fff')}
+    </div>
+    <div class="logo-text logo-text-${size}">Edu<span>Learn</span></div>
+  </div>`;
+}
+
+function sheetHTML(title, content) {
+  return `<div class="sheet-overlay open" onclick="closeSheet(event)">
+    <div class="sheet-scrim"></div>
+    <div class="sheet-panel" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${title}</div>
+      ${content}
+    </div>
+  </div>`;
+}
+
+function fieldHTML(label, icn, type = 'text', value = '', placeholder = '') {
+  return `<div class="field">
+    <label>${label}</label>
+    <div class="field-box">
+      ${icon(icn, 18, 'color:var(--ink-500)')}
+      <input type="${type}" value="${value}" placeholder="${placeholder}" />
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   RENDER ENGINE
+   ============================================================ */
+function render() {
+  document.getElementById('root').innerHTML = `
+    <div class="phone">
+      ${statusBarHTML()}
+      ${mainContentHTML()}
+    </div>`;
+  lucide.createIcons();
+  // Restore search focus if on search screen
+  if (App.stack.length && App.stack[App.stack.length-1].screen === 'search') {
+    const inp = document.querySelector('#search-input');
+    if (inp) { inp.focus(); inp.selectionStart = inp.selectionEnd = inp.value.length; }
+  }
+  // Scale phone to viewport
+  fitPhone();
+}
+
+function statusBarHTML() {
+  return `<div class="status-bar">
+    <span>9:41</span>
+    <div class="status-icons">
+      ${icon('signal', 16)}${icon('wifi', 16)}${icon('battery-full', 20)}
+    </div>
+  </div>`;
+}
+
+function mainContentHTML() {
+  if (App.phase !== 'app') {
+    return ({
+      welcome: welcomeScreen,
+      signin:  signInScreen,
+      signup:  signUpScreen,
+    }[App.phase] || welcomeScreen)();
+  }
+
+  const top = App.stack[App.stack.length - 1];
+
+  if (App.role === 'teacher') {
+    return top ? libraryScreen() : teacherHomeScreen();
+  }
+  if (App.role === 'parent') {
+    return App.parentChild ? parentChildScreen() : parentHomeScreen();
+  }
+
+  // Student
+  let screen;
+  if (top) {
+    if (top.screen === 'reader') screen = readerScreen(top.params.book);
+    else if (top.screen === 'search') screen = searchScreen();
+    else screen = studentHomeScreen();
+  } else {
+    screen = ({
+      home:     studentHomeScreen,
+      library:  libraryScreen,
+      quiz:     quizScreen,
+      stats:    statsScreen,
+      settings: settingsScreen,
+    }[App.tab] || studentHomeScreen)();
+  }
+
+  return screen + (!top ? tabBarHTML() : '');
+}
+
+/* ============================================================
+   TAB BAR
+   ============================================================ */
+function tabBarHTML() {
+  const tabs = [
+    { id: 'home',     icon: 'house',       label: 'Home' },
+    { id: 'library',  icon: 'library',     label: 'Library' },
+    { id: 'quiz',     icon: 'pencil',      label: 'Quiz' },
+    { id: 'stats',    icon: 'bar-chart-3', label: 'Stats' },
+    { id: 'settings', icon: 'settings',    label: 'Settings' },
+  ];
+  return `<div class="tab-bar">
+    <div class="tab-bar-inner">
+      ${tabs.map(t => `
+        <button class="tab-btn ${App.tab === t.id ? 'active' : ''}" onclick="setTab('${t.id}')">
+          ${icon(t.icon, 21)}
+          <span>${t.label}</span>
+        </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   AUTH SCREENS
+   ============================================================ */
+function welcomeScreen() {
+  return `<div class="screen active" style="padding-bottom:0">
+    <!-- Hero -->
+    <div style="padding:40px 24px 36px;background:linear-gradient(160deg,var(--marigold-100),var(--paper) 70%)">
+      ${logoHTML('lg')}
+      <h1 style="font-family:var(--font-display);font-size:33px;line-height:37px;font-weight:800;letter-spacing:-.02em;color:var(--ink-900);margin:28px 0 10px">
+        Learning that<br>feels like home.
+      </h1>
+      <p style="font-size:15.5px;line-height:23px;color:var(--fg2);max-width:300px">
+        Books, quizzes and progress for every primary-school learner — and the grown-ups who cheer them on.
+      </p>
+    </div>
+
+    <!-- Role chooser -->
+    <div style="padding:8px 24px 28px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg3);margin:6px 0 12px">
+        I am a…
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${ROLES.map(r => {
+          const on = App.role === r.id;
+          return `<button onclick="setRole('${r.id}')" style="
+            text-align:left;cursor:pointer;display:flex;align-items:center;gap:14px;
+            padding:15px;border-radius:18px;width:100%;
+            background:${on ? 'var(--clay-100)' : 'var(--surface)'};
+            border:1.5px solid ${on ? 'var(--clay-500)' : 'var(--sand-300)'};
+            box-shadow:${on ? 'none' : 'var(--shadow-xs)'};transition:all .15s">
+            <div style="width:46px;height:46px;border-radius:13px;flex-shrink:0;
+              background:${on ? 'var(--clay-500)' : 'var(--sand-100)'};
+              display:flex;align-items:center;justify-content:center">
+              ${icon(r.icon, 23, `color:${on ? '#fff' : 'var(--ink-700)'}`)}
+            </div>
+            <div style="flex:1">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--ink-900)">${r.label}</div>
+              <div style="font-size:13px;color:var(--fg3);margin-top:1px">${r.desc}</div>
+            </div>
+            <div style="width:22px;height:22px;border-radius:999px;flex-shrink:0;
+              border:2px solid ${on ? 'var(--clay-500)' : 'var(--sand-400)'};
+              background:${on ? 'var(--clay-500)' : 'transparent'};
+              display:flex;align-items:center;justify-content:center">
+              ${on ? icon('check', 13, 'color:#fff') : ''}
+            </div>
+          </button>`;
+        }).join('')}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
+        <button class="btn btn-primary btn-lg btn-full" onclick="goPhase('signin')">Sign in</button>
+        <button class="btn btn-ghost btn-lg btn-full" onclick="goPhase('signup')">Create an account</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function signInScreen() {
+  const r = ROLES.find(x => x.id === App.role) || ROLES[0];
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <button class="icon-btn" onclick="goPhase('welcome')">${icon('chevron-left', 22)}</button>
+      <div style="flex:1"></div>
+    </div>
+    <div style="margin-top:-6px">
+      ${logoHTML()}
+      <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:-.015em;color:var(--ink-900);margin:26px 0 6px">
+        Welcome back
+      </h1>
+      <p style="font-size:15px;color:var(--fg2)">Sign in to keep learning.</p>
+
+      <div style="display:inline-flex;align-items:center;gap:7px;margin-top:16px;padding:6px 12px;
+        background:var(--sand-100);border-radius:var(--r-pill);white-space:nowrap">
+        ${icon(r.icon, 15, 'color:var(--clay-600)')}
+        <span style="font-size:13px;font-weight:600;color:var(--ink-700)">Signing in as ${r.label}</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:24px">
+        ${fieldHTML('Username', 'user', 'text', 'paka', 'your username')}
+        <div class="field">
+          <label>Password</label>
+          <div class="field-box">
+            ${icon('lock', 18, 'color:var(--ink-500)')}
+            <input type="password" value="learnallday78" placeholder="password" />
+            <button style="border:none;background:none;cursor:pointer;color:var(--ink-500);padding:0">
+              ${icon('eye', 18)}
+            </button>
+          </div>
+        </div>
+        <div style="text-align:right;margin-top:-6px">
+          <span style="font-size:13px;font-weight:600;color:var(--clay-500);cursor:pointer">Forgot password?</span>
+        </div>
+        <button class="btn btn-primary btn-lg btn-full" onclick="authAs('${App.role}')">Sign in</button>
+      </div>
+
+      <div style="text-align:center;margin-top:22px;font-size:14px;color:var(--fg2)">
+        New here? <span onclick="goPhase('signup')" style="color:var(--clay-500);font-weight:700;cursor:pointer">Create an account</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function signUpScreen() {
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <button class="icon-btn" onclick="goPhase('welcome')">${icon('chevron-left', 22)}</button>
+      <div style="flex:1"></div>
+    </div>
+    <div style="margin-top:-6px">
+      ${logoHTML()}
+      <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:-.015em;color:var(--ink-900);margin:26px 0 6px">
+        Create your account
+      </h1>
+      <p style="font-size:15px;color:var(--fg2)">Free for students, teachers and parents.</p>
+
+      <!-- Role switcher -->
+      <div style="display:flex;gap:8px;margin-top:18px">
+        ${ROLES.map(r => `<button onclick="setRole('${r.id}')" style="flex:1;cursor:pointer;padding:11px 6px;border-radius:14px;
+          border:1.5px solid ${App.role===r.id?'var(--clay-500)':'var(--sand-300)'};
+          background:${App.role===r.id?'var(--clay-100)':'var(--surface)'};
+          display:flex;flex-direction:column;align-items:center;gap:5px">
+          ${icon(r.icon, 20, `color:${App.role===r.id?'var(--clay-600)':'var(--ink-500)'}`)}
+          <span style="font-size:12.5px;font-weight:700;color:${App.role===r.id?'var(--clay-600)':'var(--ink-700)'}">${r.label}</span>
+        </button>`).join('')}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:18px">
+        ${fieldHTML('Username', 'user', 'text', '', 'choose a username')}
+        ${App.role !== 'parent' ? fieldHTML(App.role === 'teacher' ? 'Class you teach' : 'Your class', 'layers', 'text', 'Grade 4', 'e.g. Grade 4') : ''}
+        ${fieldHTML('Password', 'lock', 'password', '', 'at least 4 characters')}
+        ${fieldHTML('Confirm password', 'lock', 'password', '', 're-type password')}
+        <button class="btn btn-primary btn-lg btn-full" onclick="authAs('${App.role}')">Create account</button>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;font-size:14px;color:var(--fg2)">
+        Already have an account? <span onclick="goPhase('signin')" style="color:var(--clay-500);font-weight:700;cursor:pointer">Sign in</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   STUDENT SCREENS
+   ============================================================ */
+function studentHomeScreen() {
+  const u = App.user;
+  const continueBook = BOOKS.find(b => b.id === App.lib.continueReading[0]);
+  const tiles = [
+    { id: 'library',  label: 'Library',      sub: `${BOOKS.length} books`, icon: 'library',     color: 'var(--subj-english)', tint: 'var(--subj-english-100)' },
+    { id: 'quiz',     label: 'Take a quiz',   sub: `${QUIZZES.length} ready`, icon: 'pencil',    color: 'var(--subj-social)',  tint: 'var(--subj-social-100)' },
+    { id: 'search',   label: 'Search books',  sub: 'Find anything',         icon: 'search',      color: 'var(--subj-science)', tint: 'var(--subj-science-100)' },
+    { id: 'stats',    label: 'Statistics',    sub: 'Your progress',         icon: 'bar-chart-3', color: 'var(--subj-maths)',   tint: 'var(--subj-maths-100)' },
+  ];
+
+  return `<div class="screen active" style="padding-bottom:0">
+    <!-- Hero header -->
+    <div style="padding:18px 20px 20px;background:linear-gradient(150deg,var(--marigold-100),var(--paper) 78%)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:44px;height:44px;border-radius:999px;background:var(--clay-500);color:#fff;
+            display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:19px">
+            ${u.name[0]}
+          </div>
+          <div>
+            <div style="font-size:13px;color:var(--fg3)">Welcome back</div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--ink-900)">${u.name} · ${u.grade}</div>
+          </div>
+        </div>
+        <button class="icon-btn" style="position:relative">
+          ${icon('bell', 20)}
+          <span style="position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:999px;background:var(--clay-500);border:2px solid var(--surface)"></span>
+        </button>
+      </div>
+
+      <!-- Streak card -->
+      <div style="margin-top:18px;border-radius:20px;padding:18px;color:#fff;
+        background:linear-gradient(120deg,var(--clay-500),var(--marigold-500));
+        box-shadow:var(--shadow-primary);display:flex;align-items:center;gap:16px">
+        <div style="width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center">
+          ${icon('flame', 28, 'color:#fff')}
+        </div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-display);font-weight:800;font-size:26px;line-height:1">5-day streak</div>
+          <div style="font-size:13.5px;opacity:.92;margin-top:4px">Read today to keep it going</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div style="padding:4px 20px 120px">
+      ${continueBook ? `
+        <div class="section-title">Continue reading</div>
+        <div class="card card-clickable" onclick="navPush('reader', ${continueBook.id})"
+          style="display:flex;gap:14px;align-items:center;padding:13px">
+          ${bookCoverHTML(continueBook)}
+          <div style="flex:1">
+            <div style="font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--ink-900)">${continueBook.title}</div>
+            <div style="font-size:12.5px;color:var(--fg3);margin-bottom:8px">Page 24 of ${continueBook.pages}</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:28%"></div></div>
+          </div>
+          <div style="width:44px;height:44px;border-radius:999px;background:var(--clay-500);color:#fff;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            ${icon('play', 20, 'color:#fff')}
+          </div>
+        </div>` : ''}
+
+      <div class="section-title">What would you like to do?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${tiles.map(t => `
+          <div class="card card-clickable" onclick="tileTap('${t.id}')"
+            style="display:flex;flex-direction:column;gap:12px;min-height:116px;padding:16px">
+            <div style="width:46px;height:46px;border-radius:13px;background:${t.tint};
+              display:flex;align-items:center;justify-content:center">
+              ${icon(t.icon, 23, `color:${t.color}`)}
+            </div>
+            <div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--ink-900)">${t.label}</div>
+              <div style="font-size:12.5px;color:var(--fg3);margin-top:1px">${t.sub}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   LIBRARY SCREEN
+   ============================================================ */
+function bookRowHTML(book, showActions = true) {
+  const s = SUBJECTS[book.subject] || SUBJECTS.Story;
+  const fav = App.lib.favourites.includes(book.id);
+  const dl  = App.lib.downloads.includes(book.id);
+  return `<div class="card card-clickable" onclick="navPush('reader', ${book.id})"
+    style="display:flex;gap:13px;align-items:center;padding:13px">
+    ${bookCoverHTML(book)}
+    <div style="flex:1;min-width:0">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--ink-900);
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${book.title}</div>
+      <div style="font-size:12.5px;color:var(--fg3);margin-top:1px">${book.author}</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        ${badge(book.subject, s.color, s.tint)}
+        ${dl ? badge('Saved', 'var(--success)', 'var(--success-100)', 'check') : ''}
+      </div>
+    </div>
+    ${showActions ? `
+      <div style="display:flex;flex-direction:column;gap:8px" onclick="event.stopPropagation()">
+        <button onclick="toggleFav(${book.id})" style="width:38px;height:38px;border-radius:11px;border:none;cursor:pointer;
+          background:${fav ? 'var(--clay-100)' : 'var(--sand-100)'};
+          color:${fav ? 'var(--clay-500)' : 'var(--ink-400)'};
+          display:inline-flex;align-items:center;justify-content:center">
+          ${icon('bookmark', 18)}
+        </button>
+        <button onclick="toggleDl(${book.id})" style="width:38px;height:38px;border-radius:11px;border:none;cursor:pointer;
+          background:${dl ? 'var(--success-100)' : 'var(--sand-100)'};
+          color:${dl ? 'var(--success)' : 'var(--ink-400)'};
+          display:inline-flex;align-items:center;justify-content:center">
+          ${icon(dl ? 'check' : 'download', 18)}
+        </button>
+      </div>` : ''}
+  </div>`;
+}
+
+function libraryScreen() {
+  const segs = [
+    { id: 'all',       label: 'All books' },
+    { id: 'downloads', label: 'Downloads' },
+    { id: 'favourites',label: 'Favourites' },
+    { id: 'foryou',    label: 'For you' },
+  ];
+  const seg = App.libSeg;
+  let list = BOOKS;
+  if (seg === 'downloads')  list = BOOKS.filter(b => App.lib.downloads.includes(b.id));
+  else if (seg === 'favourites') list = BOOKS.filter(b => App.lib.favourites.includes(b.id));
+  else if (seg === 'foryou') {
+    const favSubjs = BOOKS.filter(b => App.lib.favourites.includes(b.id)).map(b => b.subject);
+    list = BOOKS.filter(b => favSubjs.includes(b.subject) && !App.lib.favourites.includes(b.id));
+  }
+  if (seg === 'all' && App.subject !== 'All') list = list.filter(b => b.subject === App.subject);
+  const subjects = ['All', ...Object.keys(SUBJECTS)];
+  const hasBack = App.stack.length > 0 || App.role === 'teacher';
+
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      ${hasBack ? `<button class="icon-btn" onclick="navBack()">${icon('chevron-left', 22)}</button>` : ''}
+      <div style="flex:1">
+        <div class="app-bar-title">Library</div>
+        <div class="app-bar-subtitle">${BOOKS.length} books · ${App.lib.downloads.length} offline</div>
+      </div>
+      <button class="icon-btn" onclick="navPush('search')">${icon('search', 20)}</button>
+    </div>
+
+    <!-- Segmented control -->
+    <div class="seg-control">
+      ${segs.map(s => `<button class="seg-btn ${seg===s.id?'active':''}" onclick="setLibSeg('${s.id}')">${s.label}</button>`).join('')}
+    </div>
+
+    <!-- Subject chips (all view only) -->
+    ${seg === 'all' ? `
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px">
+        ${subjects.map(s => `<button class="chip ${App.subject===s?'selected':''}" onclick="setSubject('${s}')">${s}</button>`).join('')}
+      </div>` : ''}
+
+    ${seg === 'foryou' ? `
+      <div style="display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:14px;background:var(--marigold-100);margin-bottom:12px">
+        ${icon('sparkles', 18, 'color:var(--subj-social)')}
+        <span style="font-size:13px;color:var(--ink-700);font-weight:600">Recommended from subjects you've favourited</span>
+      </div>` : ''}
+
+    <!-- Book list -->
+    <div style="display:flex;flex-direction:column;gap:11px">
+      ${list.length === 0
+        ? `<div class="empty-state">
+            <div class="empty-icon-wrap">${icon(seg==='downloads'?'download':seg==='favourites'?'bookmark':'sparkles', 28, 'color:var(--ink-400)')}</div>
+            <div class="empty-title">${seg==='downloads'?'No downloads yet':seg==='favourites'?'No favourites yet':'Nothing here yet'}</div>
+            <div class="empty-text">${seg==='downloads'?'Tap the download icon on a book to save it for offline reading.':seg==='favourites'?'Tap the bookmark on a book to add it here.':'Favourite a few books and we\'ll suggest more like them.'}</div>
+          </div>`
+        : list.map(b => bookRowHTML(b)).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   READER SCREEN
+   ============================================================ */
+function readerScreen(book) {
+  if (!book) book = BOOKS[0];
+  const s = SUBJECTS[book.subject] || SUBJECTS.Story;
+  const fav = App.lib.favourites.includes(book.id);
+  const dl  = App.lib.downloads.includes(book.id);
+  const paras = book.content.split('\n\n');
+
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <button class="icon-btn" onclick="navBack()">${icon('chevron-left', 22)}</button>
+      <div style="flex:1"></div>
+      <button onclick="toggleFav(${book.id})" class="icon-btn ${fav ? 'active' : ''}">
+        ${icon('bookmark', 20)}
+      </button>
+    </div>
+
+    <!-- Book header -->
+    <div style="display:flex;gap:16px;align-items:center;margin-top:-4px">
+      ${bookCoverHTML(book, 'lg')}
+      <div>
+        ${badge(`${book.subject} · ${book.grade}`, s.color, s.tint)}
+        <div style="font-family:var(--font-display);font-weight:800;font-size:23px;line-height:27px;
+          letter-spacing:-.01em;color:var(--ink-900);margin:9px 0 3px">${book.title}</div>
+        <div style="font-size:13.5px;color:var(--fg3)">${book.author} · ${book.pages} pages</div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-primary btn-md btn-full" style="flex:1">
+        ${icon('book-open', 20, 'color:#fff')} Read now
+      </button>
+      <button onclick="toggleDl(${book.id})" class="icon-btn" style="width:52px;height:auto;border-radius:14px;
+        background:${dl?'var(--success-100)':'var(--surface)'};
+        color:${dl?'var(--success)':'var(--ink-700)'}">
+        ${icon(dl ? 'check' : 'download', 20)}
+      </button>
+    </div>
+
+    <!-- Book content -->
+    <div style="margin-top:24px;padding:22px 20px;background:var(--surface);
+      border:1px solid var(--sand-200);border-radius:18px">
+      ${paras.map((para, i) => `
+        <p style="font-family:var(--font-body);font-size:17px;line-height:29px;color:var(--ink-700);
+          margin:${i===0?'0':'18px 0 0'}">
+          ${i === 0
+            ? `<span style="float:left;font-family:var(--font-display);font-weight:800;font-size:52px;
+                line-height:42px;color:${s.color};margin:4px 10px 0 0">${para[0]}</span>${para.slice(1)}`
+            : para}
+        </p>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   SEARCH SCREEN
+   ============================================================ */
+function searchScreen() {
+  const kw = App.searchQ.toLowerCase().trim();
+  const results = kw
+    ? BOOKS.filter(b =>
+        b.title.toLowerCase().includes(kw) ||
+        b.author.toLowerCase().includes(kw) ||
+        b.subject.toLowerCase().includes(kw))
+    : [];
+  const recent = ['Mathematics', 'Paka', 'Science'];
+
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <button class="icon-btn" onclick="navBack()">${icon('chevron-left', 22)}</button>
+      <div class="app-bar-title" style="flex:1">Search</div>
+    </div>
+
+    <!-- Search field -->
+    <div class="field-box">
+      ${icon('search', 18, 'color:var(--ink-500)')}
+      <input id="search-input" type="text" value="${App.searchQ}"
+        oninput="setSearch(this.value)"
+        placeholder="Search by title, author or subject" style="flex:1" />
+      ${App.searchQ
+        ? `<button onclick="setSearch('')" style="border:none;background:none;cursor:pointer;color:var(--ink-500);padding:0">${icon('x', 18)}</button>`
+        : ''}
+    </div>
+
+    ${!kw
+      ? `<div style="margin-top:22px">
+          <div style="font-size:13px;font-weight:700;color:var(--fg3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px">Try searching</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${recent.map(r => `<button class="chip" onclick="setSearch('${r}')">${r}</button>`).join('')}
+          </div>
+        </div>`
+      : `<div style="margin-top:16px;display:flex;flex-direction:column;gap:11px">
+          <div style="font-size:13px;color:var(--fg3);margin-bottom:2px">
+            ${results.length} result${results.length !== 1 ? 's' : ''} for "${App.searchQ}"
+          </div>
+          ${results.length === 0
+            ? `<div class="empty-state">
+                <div class="empty-icon-wrap">${icon('search-x', 28, 'color:var(--ink-400)')}</div>
+                <div class="empty-title">No match found</div>
+                <div class="empty-text">Try another title, author or subject.</div>
+              </div>`
+            : results.map(b => bookRowHTML(b)).join('')}
+        </div>`}
+  </div>`;
+}
+
+/* ============================================================
+   QUIZ SCREEN
+   ============================================================ */
+function quizScreen() {
+  const qs = App.quiz;
+
+  if (qs.view === 'run' && qs.quiz) {
+    const q = qs.quiz.questions[qs.qi];
+    const labels = ['A', 'B', 'C', 'D'];
+    const progress = (qs.qi / qs.quiz.questions.length) * 100;
+    return `<div class="screen active screen-pad">
+      <div class="app-bar">
+        <button class="icon-btn" onclick="quizBack()">${icon('chevron-left', 22)}</button>
+        <div style="flex:1">
+          <div class="app-bar-title">${qs.quiz.title}</div>
+          <div class="app-bar-subtitle">Question ${qs.qi + 1} of ${qs.quiz.questions.length}</div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-bar" style="margin-bottom:22px">
+        <div class="progress-fill" style="width:${progress}%"></div>
+      </div>
+
+      <!-- Question -->
+      <div style="font-family:var(--font-display);font-weight:700;font-size:23px;line-height:30px;color:var(--ink-900);margin-bottom:22px">
+        ${q.q}
+      </div>
+
+      <!-- Options -->
+      <div style="display:flex;flex-direction:column;gap:11px">
+        ${q.options.map((opt, i) => {
+          const on = qs.picked === opt;
+          return `<button onclick="quizPick('${opt}')" style="
+            display:flex;align-items:center;gap:13px;text-align:left;width:100%;
+            padding:15px;border-radius:15px;cursor:pointer;
+            background:${on?'var(--clay-100)':'var(--surface)'};
+            border:1.5px solid ${on?'var(--clay-500)':'var(--sand-300)'};
+            box-shadow:${on?'none':'var(--shadow-xs)'}">
+            <div style="width:32px;height:32px;border-radius:9px;flex-shrink:0;
+              display:flex;align-items:center;justify-content:center;
+              font-family:var(--font-display);font-weight:700;font-size:15px;
+              background:${on?'var(--clay-500)':'var(--sand-100)'};
+              color:${on?'#fff':'var(--ink-700)'}">
+              ${labels[i]}
+            </div>
+            <span style="font-size:16px;font-weight:600;color:var(--ink-900)">${opt}</span>
+          </button>`;
+        }).join('')}
+      </div>
+
+      <div style="margin-top:24px">
+        <button class="${qs.picked ? 'btn btn-primary btn-lg btn-full' : 'btn btn-disabled btn-lg btn-full'}"
+          onclick="${qs.picked ? 'quizSubmit()' : ''}">
+          ${qs.qi + 1 === qs.quiz.questions.length ? 'Finish quiz' : 'Next question'}
+        </button>
+      </div>
+    </div>`;
+  }
+
+  if (qs.view === 'result' && qs.quiz) {
+    const total = qs.quiz.questions.length;
+    const pct = Math.round((qs.score / total) * 100);
+    const great = pct >= 80;
+    return `<div class="screen active screen-pad">
+      <div class="app-bar">
+        <button class="icon-btn" onclick="quizBack()">${icon('chevron-left', 22)}</button>
+      </div>
+      <div style="text-align:center;padding-top:18px">
+        <div style="width:96px;height:96px;border-radius:999px;margin:0 auto 20px;
+          display:flex;align-items:center;justify-content:center;
+          background:${great?'var(--success-100)':'var(--marigold-100)'}">
+          ${icon(great?'party-popper':'thumbs-up', 46, `color:${great?'var(--success)':'var(--subj-social)'}`)}
+        </div>
+        <div style="font-family:var(--font-display);font-weight:800;font-size:28px;color:var(--ink-900)">${great?'Brilliant work!':'Nice effort!'}</div>
+        <div style="font-size:15px;color:var(--fg2);margin-top:6px">You finished "${qs.quiz.title}".</div>
+
+        <div style="margin:26px auto;max-width:260px;background:var(--surface);border:1px solid var(--sand-300);border-radius:20px;padding:22px;box-shadow:var(--shadow-sm)">
+          <div style="font-family:var(--font-display);font-weight:800;font-size:52px;color:var(--clay-500);line-height:1">
+            ${qs.score}/${total}
+          </div>
+          <div style="font-size:14px;color:var(--fg3);margin-top:4px">${pct}% correct</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto">
+          <button class="btn btn-primary btn-md btn-full" onclick="quizRetry()">Try again</button>
+          <button class="btn btn-outline btn-md btn-full" onclick="quizBack()">Back to quizzes</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  if (qs.view === 'history') {
+    return `<div class="screen active screen-pad">
+      <div class="app-bar">
+        <button class="icon-btn" onclick="quizBack()">${icon('chevron-left', 22)}</button>
+        <div class="app-bar-title" style="flex:1">Quiz history</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        ${QUIZ_HISTORY.map(h => {
+          const s = SUBJECTS[h.subject];
+          const pct = Math.round((h.score / h.total) * 100);
+          return `<div class="card" style="display:flex;align-items:center;gap:13px">
+            <div style="width:44px;height:44px;border-radius:12px;background:${s.tint};
+              display:flex;align-items:center;justify-content:center">
+              ${icon(s.icon, 21, `color:${s.color}`)}
+            </div>
+            <div style="flex:1">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--ink-900)">${h.title}</div>
+              <div style="font-size:12.5px;color:var(--fg3)">${h.subject}</div>
+            </div>
+            ${badge(`${h.score}/${h.total}`, pct>=80?'var(--success)':'var(--subj-social)', pct>=80?'var(--success-100)':'var(--marigold-100)')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Quiz list
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <div style="flex:1">
+        <div class="app-bar-title">Take a quiz</div>
+        <div class="app-bar-subtitle">5 questions or fewer · no timer</div>
+      </div>
+      <button class="icon-btn" onclick="showQuizHistory()">${icon('history', 20)}</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      ${QUIZZES.map(q => {
+        const s = SUBJECTS[q.subject];
+        return `<div class="card card-clickable" onclick="startQuiz(${q.id})"
+          style="display:flex;align-items:center;gap:14px">
+          <div style="width:52px;height:52px;border-radius:14px;background:${s.tint};
+            display:flex;align-items:center;justify-content:center">
+            ${icon(s.icon, 25, `color:${s.color}`)}
+          </div>
+          <div style="flex:1">
+            <div style="font-family:var(--font-display);font-weight:700;font-size:16.5px;color:var(--ink-900)">${q.title}</div>
+            <div style="font-size:13px;color:var(--fg3);margin-top:2px">${q.subject} · ${q.questions.length} questions</div>
+          </div>
+          <div style="width:40px;height:40px;border-radius:999px;background:var(--clay-100);
+            color:var(--clay-600);display:flex;align-items:center;justify-content:center">
+            ${icon('arrow-right', 19)}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   STATS SCREEN
+   ============================================================ */
+function statsScreen() {
+  const week = [
+    {d:'M',v:20},{d:'T',v:35},{d:'W',v:15},{d:'T',v:42},{d:'F',v:28},{d:'S',v:10},{d:'S',v:34},
+  ];
+  const max = Math.max(...week.map(w => w.v));
+  const cards = [
+    { label: 'Books read',   value: 12,                   icon: 'book-open',  color: 'var(--subj-english)', tint: 'var(--subj-english-100)' },
+    { label: 'Downloaded',   value: App.lib.downloads.length, icon: 'download', color: 'var(--subj-maths)',   tint: 'var(--subj-maths-100)' },
+    { label: 'Minutes read', value: 184,                  icon: 'clock',      color: 'var(--subj-science)', tint: 'var(--subj-science-100)' },
+    { label: 'Quizzes done', value: QUIZ_HISTORY.length,  icon: 'pencil',     color: 'var(--subj-social)',  tint: 'var(--subj-social-100)' },
+  ];
+
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <div style="flex:1">
+        <div class="app-bar-title">Statistics</div>
+        <div class="app-bar-subtitle">Your learning this week</div>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${cards.map(c => `
+        <div class="card" style="padding:15px">
+          <div style="width:40px;height:40px;border-radius:11px;background:${c.tint};
+            display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+            ${icon(c.icon, 20, `color:${c.color}`)}
+          </div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:30px;color:var(--ink-900);line-height:1">
+            ${c.value}
+          </div>
+          <div style="font-size:13px;color:var(--fg3);margin-top:4px">${c.label}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Bar chart -->
+    <div class="section-title">Reading minutes</div>
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;height:130px;gap:8px">
+        ${week.map((w, i) => `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="width:100%;max-width:26px;min-height:8px;border-radius:8px;
+              height:${Math.round((w.v/max)*100)}%;
+              background:${i===3?'var(--clay-500)':'var(--sand-300)'}"></div>
+            <span style="font-size:11px;font-weight:700;color:var(--fg3)">${w.d}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Recent quizzes -->
+    <div class="section-title">Recent quizzes</div>
+    <div style="display:flex;flex-direction:column;gap:11px">
+      ${QUIZ_HISTORY.map(h => {
+        const s = SUBJECTS[h.subject];
+        const pct = Math.round((h.score / h.total) * 100);
+        return `<div class="card" style="padding:14px;display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:11px;background:${s.tint};
+            display:flex;align-items:center;justify-content:center">
+            ${icon(s.icon, 19, `color:${s.color}`)}
+          </div>
+          <div style="flex:1;font-size:14.5px;font-weight:600;color:var(--ink-900)">${h.title}</div>
+          ${badge(pct+'%', pct>=80?'var(--success)':'var(--subj-social)', pct>=80?'var(--success-100)':'var(--marigold-100)')}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   SETTINGS SCREEN
+   ============================================================ */
+function settingsScreen() {
+  const rows = [
+    { icon: 'user',        label: 'View profile' },
+    { icon: 'lock',        label: 'Change password' },
+    { icon: 'bell',        label: 'Notifications', toggle: true },
+    { icon: 'circle-help', label: 'Help & support' },
+  ];
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <div class="app-bar-title" style="flex:1">Settings</div>
+    </div>
+
+    <!-- Profile card -->
+    <div class="card" style="display:flex;align-items:center;gap:15px;padding:18px;margin-bottom:4px">
+      <div style="width:58px;height:58px;border-radius:999px;background:var(--clay-500);color:#fff;
+        display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:24px">
+        ${App.user.name[0]}
+      </div>
+      <div style="flex:1">
+        <div style="font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--ink-900)">${App.user.name}</div>
+        <div style="display:flex;gap:6px;margin-top:5px">
+          ${badge('Student', 'var(--clay-600)', 'var(--clay-100)')}
+          ${App.user.grade ? badge(App.user.grade, 'var(--ink-700)', 'var(--sand-200)') : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Account</div>
+    <div class="card" style="padding:4px">
+      ${rows.map((row, i) => `
+        <div style="display:flex;align-items:center;gap:13px;padding:14px 13px;cursor:${row.toggle?'default':'pointer'};
+          border-bottom:${i<rows.length-1?'1px solid var(--divider)':'none'}">
+          ${icon(row.icon, 20, 'color:var(--ink-600)')}
+          <span style="flex:1;font-size:15px;font-weight:600;color:var(--ink-900)">${row.label}</span>
+          ${row.toggle
+            ? `<button class="toggle ${App.notif?'on':'off'}" onclick="toggleNotif()"><span class="toggle-thumb"></span></button>`
+            : icon('chevron-right', 18, 'color:var(--ink-400)')}
+        </div>`).join('')}
+    </div>
+
+    <div style="margin-top:22px">
+      <button class="btn btn-outline btn-md btn-full" onclick="logout()">
+        ${icon('log-out', 18, 'color:var(--ink-700)')} Log out
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:18px;font-size:12px;color:var(--fg3)">Edu-Learn · v1.0</div>
+  </div>`;
+}
+
+/* ============================================================
+   TEACHER SCREENS
+   ============================================================ */
+function teacherHomeScreen() {
+  const tiles = [
+    { id: 'upload',  label: 'Upload a book',  sub: 'Add to the library', icon: 'upload',    color: 'var(--subj-english)', tint: 'var(--subj-english-100)' },
+    { id: 'quiz',    label: 'Create a quiz',  sub: 'Author questions',   icon: 'pencil',    color: 'var(--subj-social)',  tint: 'var(--subj-social-100)' },
+    { id: 'classes', label: 'Manage classes', sub: '2 classes',          icon: 'users',     color: 'var(--subj-science)', tint: 'var(--subj-science-100)' },
+    { id: 'library', label: 'Library',        sub: `${BOOKS.length} books`, icon: 'library', color: 'var(--subj-maths)',   tint: 'var(--subj-maths-100)' },
+  ];
+  const myUploads = BOOKS.filter(b => b.id === 2 || b.id === 7);
+
+  return `<div class="screen active" style="padding-bottom:0">
+    <!-- Teacher hero -->
+    <div style="padding:18px 20px 8px;background:linear-gradient(150deg,var(--sage-100),var(--paper) 80%)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:44px;height:44px;border-radius:999px;background:var(--sage-500);color:#fff;
+            display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:19px">F</div>
+          <div>
+            <div style="font-size:13px;color:var(--fg3)">Teacher dashboard</div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--ink-900)">Madam Fun · Grade 4</div>
+          </div>
+        </div>
+        <button class="icon-btn" onclick="logout()">${icon('log-out', 20)}</button>
+      </div>
+    </div>
+
+    <div style="padding:14px 20px 60px">
+      <!-- Tiles -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${tiles.map(t => `
+          <div class="card card-clickable" onclick="teacherTileTap('${t.id}')"
+            style="display:flex;flex-direction:column;gap:12px;min-height:116px;padding:16px">
+            <div style="width:46px;height:46px;border-radius:13px;background:${t.tint};
+              display:flex;align-items:center;justify-content:center">
+              ${icon(t.icon, 23, `color:${t.color}`)}
+            </div>
+            <div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--ink-900)">${t.label}</div>
+              <div style="font-size:12.5px;color:var(--fg3);margin-top:1px">${t.sub}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <div class="section-title">My uploads</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        ${myUploads.map(b => {
+          const s = SUBJECTS[b.subject];
+          return `<div class="card" style="padding:13px;display:flex;gap:13px;align-items:center">
+            ${bookCoverHTML(b)}
+            <div style="flex:1">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--ink-900)">${b.title}</div>
+              <div style="font-size:12.5px;color:var(--fg3);margin-top:3px">
+                ${badge(b.subject, s.color, s.tint)} <span style="margin-left:4px">${b.grade}</span>
+              </div>
+            </div>
+            <button class="icon-btn">${icon('ellipsis-vertical', 16)}</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    ${App.teacherSheet ? renderTeacherSheet() : ''}
+  </div>`;
+}
+
+function renderTeacherSheet() {
+  const uploadContent = `
+    <div style="display:flex;flex-direction:column;gap:14px">
+      ${fieldHTML('Book title', 'book', 'text', '', 'e.g. Aki Ola Mathematics')}
+      ${fieldHTML('Author', 'user', 'text', '', 'Author name')}
+      ${fieldHTML('Subject', 'tag', 'text', '', 'e.g. Mathematics')}
+      <div style="border:1.5px dashed var(--sand-400);border-radius:14px;padding:22px;text-align:center;color:var(--fg3)">
+        ${icon('upload-cloud', 26, 'color:var(--ink-400)')}
+        <div style="font-size:13.5px;margin-top:8px;font-weight:600">Tap to attach book content (PDF or text)</div>
+      </div>
+      <button class="btn btn-primary btn-lg btn-full" onclick="closeSheet()">Upload book</button>
+    </div>`;
+
+  const quizContent = `
+    <div style="display:flex;flex-direction:column;gap:14px">
+      ${fieldHTML('Quiz title', 'pencil', 'text', '', 'e.g. Multiplication facts')}
+      ${fieldHTML('Subject', 'tag', 'text', '', 'e.g. Mathematics')}
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--marigold-100);border-radius:12px">
+        ${icon('info', 17, 'color:var(--subj-social)')}
+        <span style="font-size:13px;color:var(--ink-700)">You'll add questions on the next step.</span>
+      </div>
+      <button class="btn btn-primary btn-lg btn-full" onclick="closeSheet()">
+        ${icon('plus', 17, 'color:#fff')} Add questions
+      </button>
+    </div>`;
+
+  return sheetHTML(
+    App.teacherSheet === 'upload' ? 'Upload a book' : 'Create a quiz',
+    App.teacherSheet === 'upload' ? uploadContent : quizContent,
+  );
+}
+
+/* ============================================================
+   PARENT SCREENS
+   ============================================================ */
+function parentHomeScreen() {
+  return `<div class="screen active" style="padding-bottom:0">
+    <div style="padding:18px 20px 8px;background:linear-gradient(150deg,var(--clay-100),var(--paper) 80%)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:44px;height:44px;border-radius:999px;background:var(--clay-500);color:#fff;
+            display:flex;align-items:center;justify-content:center">
+            ${icon('heart-handshake', 22, 'color:#fff')}
+          </div>
+          <div>
+            <div style="font-size:13px;color:var(--fg3)">Parent dashboard</div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--ink-900)">Your children</div>
+          </div>
+        </div>
+        <button class="icon-btn" onclick="logout()">${icon('log-out', 20)}</button>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 60px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${CHILDREN.map(c => `
+          <div class="card card-clickable" onclick="setParentChild('${c.name}')"
+            style="display:flex;align-items:center;gap:14px;padding:16px">
+            <div style="width:52px;height:52px;border-radius:999px;background:${c.color};color:#fff;
+              display:flex;align-items:center;justify-content:center;
+              font-family:var(--font-display);font-weight:800;font-size:21px">${c.name[0]}</div>
+            <div style="flex:1">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--ink-900)">${c.name}</div>
+              <div style="font-size:13px;color:var(--fg3);margin-top:2px">${c.grade} · ${c.read} books · ${c.minutes} min</div>
+            </div>
+            ${icon('chevron-right', 20, 'color:var(--ink-400)')}
+          </div>`).join('')}
+      </div>
+
+      <button onclick="App.linkSheet=true;render()" style="width:100%;margin-top:14px;padding:16px;border-radius:16px;cursor:pointer;
+        border:1.5px dashed var(--sand-400);background:transparent;
+        display:flex;align-items:center;justify-content:center;gap:9px;
+        color:var(--clay-600);font-weight:700;font-size:15px;font-family:var(--font-body)">
+        ${icon('plus', 19, 'color:var(--clay-600)')} Link a child account
+      </button>
+    </div>
+
+    ${App.linkSheet ? sheetHTML('Link a child', `
+      <div style="display:flex;flex-direction:column;gap:14px">
+        ${fieldHTML("Child's username", 'user', 'text', '', 'e.g. paka')}
+        <div class="field-hint">Ask your child for their Edu-Learn username.</div>
+        <button class="btn btn-primary btn-lg btn-full" onclick="closeSheet()">Send link request</button>
+      </div>`) : ''}
+  </div>`;
+}
+
+function parentChildScreen() {
+  const c = CHILDREN.find(x => x.name === App.parentChild);
+  if (!c) return parentHomeScreen();
+  const stat = [
+    { label: 'Books read',   value: c.read,    icon: 'book-open' },
+    { label: 'Minutes read', value: c.minutes, icon: 'clock' },
+  ];
+  return `<div class="screen active screen-pad">
+    <div class="app-bar">
+      <button class="icon-btn" onclick="App.parentChild=null;render()">${icon('chevron-left', 22)}</button>
+      <div style="flex:1">
+        <div class="app-bar-title">${c.name}</div>
+        <div class="app-bar-subtitle">${c.grade}</div>
+      </div>
+    </div>
+
+    <!-- Summary hero card -->
+    <div class="card" style="background:linear-gradient(120deg,var(--sage-500),var(--subj-science));border:none;color:#fff;padding:18px">
+      <div style="font-size:13.5px;opacity:.9">This week, ${c.name}…</div>
+      <div style="font-family:var(--font-display);font-weight:800;font-size:22px;margin-top:4px">
+        read for ${Math.round(c.minutes/7)} min a day on average
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+      ${stat.map(s => `
+        <div class="card" style="padding:15px">
+          ${icon(s.icon, 20, 'color:var(--sage-500)')}
+          <div style="font-family:var(--font-display);font-weight:800;font-size:28px;
+            color:var(--ink-900);margin-top:10px;line-height:1">${s.value}</div>
+          <div style="font-size:12.5px;color:var(--fg3);margin-top:4px">${s.label}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="section-title">Latest quiz</div>
+    <div class="card" style="display:flex;align-items:center;gap:13px">
+      <div style="width:44px;height:44px;border-radius:12px;background:var(--marigold-100);
+        display:flex;align-items:center;justify-content:center">
+        ${icon('pencil', 21, 'color:var(--subj-social)')}
+      </div>
+      <div style="flex:1">
+        <div style="font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--ink-900)">${c.lastQuiz}</div>
+        <div style="font-size:12.5px;color:var(--fg3)">Completed 2 days ago</div>
+      </div>
+      ${badge(c.score, 'var(--success)', 'var(--success-100)')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function goPhase(p)      { App.phase = p; render(); }
+function setRole(r)      { App.role = r; render(); }
+function authAs(r)       { App.user = PROFILES[r]; App.role = r; App.tab = 'home'; App.stack = []; App.phase = 'app'; render(); }
+function logout()        { App.user = null; App.phase = 'welcome'; App.stack = []; render(); }
+function setTab(t)       { App.tab = t; App.stack = []; render(); }
+function tileTap(id)     { if (id === 'search') navPush('search'); else setTab(id); }
+
+function navPush(screen, bookId) {
+  const params = {};
+  if (screen === 'reader' && bookId) params.book = BOOKS.find(b => b.id === bookId);
+  App.stack.push({ screen, params });
+  render();
+}
+function navBack() { App.stack.pop(); render(); }
+
+function toggleFav(id) {
+  const l = App.lib;
+  l.favourites = l.favourites.includes(id) ? l.favourites.filter(x => x !== id) : [...l.favourites, id];
+  render();
+}
+function toggleDl(id) {
+  const l = App.lib;
+  l.downloads = l.downloads.includes(id) ? l.downloads.filter(x => x !== id) : [...l.downloads, id];
+  render();
+}
+
+function setLibSeg(s)  { App.libSeg = s; render(); }
+function setSubject(s) { App.subject = s; render(); }
+function setSearch(v)  { App.searchQ = v; render(); }
+function toggleNotif() { App.notif = !App.notif; render(); }
+
+function startQuiz(id) {
+  const q = QUIZZES.find(x => x.id === id);
+  App.quiz = { view: 'run', quiz: q, qi: 0, picked: null, score: 0 };
+  render();
+}
+function quizPick(opt) { App.quiz.picked = opt; render(); }
+function quizSubmit() {
+  const qs = App.quiz;
+  const correct = qs.picked === qs.quiz.questions[qs.qi].answer;
+  qs.score += correct ? 1 : 0;
+  if (qs.qi + 1 < qs.quiz.questions.length) { qs.qi++; qs.picked = null; }
+  else qs.view = 'result';
+  render();
+}
+function quizBack()   { App.quiz = { view: 'list', quiz: null, qi: 0, picked: null, score: 0 }; render(); }
+function quizRetry()  { const q = App.quiz.quiz; App.quiz = { view: 'run', quiz: q, qi: 0, picked: null, score: 0 }; render(); }
+function showQuizHistory() { App.quiz.view = 'history'; render(); }
+
+function teacherTileTap(id) {
+  if (id === 'library') { App.stack.push({ screen: 'library', params: {} }); render(); }
+  else if (id === 'upload' || id === 'quiz') { App.teacherSheet = id; render(); }
+}
+function closeSheet(e) {
+  App.teacherSheet = null;
+  App.linkSheet = false;
+  render();
+}
+function setParentChild(name) { App.parentChild = name; render(); }
+
+/* ============================================================
+   PHONE SCALING
+   ============================================================ */
+function fitPhone() {
+  const root = document.getElementById('root');
+  const scale = Math.min(1, (window.innerHeight - 40) / 844, (window.innerWidth - 40) / 390);
+  root.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', fitPhone);
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+render();
+setTimeout(fitPhone, 400);
+setTimeout(fitPhone, 1200);
+</script>
+</body>
+</html>
