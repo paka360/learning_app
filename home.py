@@ -6,7 +6,8 @@ from stats import show_stats, parent_view_stats
 from settings import settings_menu
 from quiz import take_quiz, view_quiz_history, create_quiz_set
 from validation import validate_number
-
+from permissions import get_children, parent_has_children
+from database import link_parent_student
 
 
 def home(user):
@@ -24,7 +25,7 @@ def home(user):
         teacher_home(user)
 
     elif role == "parent":
-        parent_home()
+        parent_home(user)
 
     else:
         print("Unknown role")
@@ -192,32 +193,56 @@ def teacher_home(user):
             print("Invalid input")
             
 
-def parent_home():
+def parent_home(user):
     """Displays menu for Parent account holders"""
 
     while True:
         
         print("\n ====PARENT DASHBOARD ====")
-        print("1. monitor child activity")
-        print("2. View child scores")
-        print("3. Settings")
-        print("4. Back")
+        print("1. Link child account")
+        print("2. View linked accounts")
+        print("3. monitor child activity")
+        print("4. View child scores")
+        print("5. Settings")
+        print("6. Back")
 
         choice = input("Select: ")
         if validate_number(choice) == False:
             print("Input should be a number")
-            
+        
+        if choice == '1':
+            print("==== LINK ACCOUNT ====")
+            student_username = input("Enter the username of your ward: ").lower().strip()
 
-        if choice == "1":   
-            parent_view_stats()
+            if parent_has_children(user["username"], student_username):
+                print("Account already linked. ")
+                return
+            
+            else:
+                success = link_parent_student(user["username"], student_username)
+                if success:
+                    print("Account linked successfully")
+                    return
+            
+                else:
+                    link_parent_student(user["username"], student_username)
+                    print("Account link failed")
+                    return
+                
     
-        elif choice == "2":
+        if choice == "2":
+            print(get_children(user["username"]))
+
+        elif choice == "3":   
+            parent_view_stats(user)
+    
+        elif choice == "4":
             print("\n==== CHILD SCORES ====")
 
-        elif choice == "3":
-            settings_menu()
+        elif choice == "5":
+            settings_menu(user)
         
-        elif choice == "4":
+        elif choice == "6":
             break
 
         else:

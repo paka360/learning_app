@@ -1,6 +1,12 @@
 from database import create_book, search_book, get_books,create_favorites, get_favorites, create_reading_history, get_reading_history, get_downloads, create_download, track_activity
 from permissions import has_grade_access, teacher_qualified
 from validation import safe_int
+import os
+import subprocess
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+import shutil
+
 
 
 def display_books(user):
@@ -59,7 +65,7 @@ def download_book(user):
 
         for book in books:
             if book["id"] == book_id:
-                success = create_download(user["username"],book["id"], book["title"], book["grade"], book["content"])
+                success = create_download(user["username"],book["id"], book["title"], book["grade"], book["file_path"])
                 
                 if success:
                     print("Book downloaded successfully")
@@ -120,7 +126,7 @@ def read_book(user):
                 print("\n=== " +book["title"] + " ===")
 
                 track_activity(user["username"], "read")    
-                print(book["content"])
+                subprocess.run(["xdg-open", book["file_path"]])
 
                 create_reading_history(user["username"], book["id"], book["title"])
                 return
@@ -165,13 +171,25 @@ def upload_book(user):
         title = input("Book Title: ")
         author = input("Book author: ")
         grade = user["grade"]
-        content = input("Book content: ")
         subject = input("Subject: ")
+        file_path = choose_file()
+        if not os.path.exists(file_path):
+            print("file not found")
+            return
+        
+        filename = os.path.basename(file_path)
+
+        destination_path = os.path.join("uploads", filename)
+
+        
+        shutil.copy(file_path, destination_path)
+        
  
-        create_book(subject, title, author, content, grade, user["username"])
+        create_book(subject, title, author, grade, user["username"],destination_path)
         print("Book uploaded successfully")
 
     except ValueError:
+        print("Upload failed")
         print("Error")
         return
 
@@ -300,6 +318,13 @@ def delete_book(user):
 
 
 
-            
+def choose_file():
+    root = Tk()
+    root.withdraw()
+
+    file_path = askopenfilename(title = "Select a book", filetypes = [("Supported File", "*.pdf *.txt. *.docx *.pptx"), ("All Files", "*.*")])
+
+    root.destroy()
+    return file_path        
         
 
