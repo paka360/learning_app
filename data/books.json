@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "title": "Golden English",
+        "author": "Okyere Baafi ALexander",
+        "grade": 4,
+        "subject": "English",
+        "content": "English teaches about the rules of the english language"
+    },
+    {
+        "id": 2,
+        "title": "Aki Ola Mathematics",
+        "author": "Peter Asiedu",
+        "grade": 4,
+        "subject": "Mathematics",
+        "content": "Mathematics teaches about numbers and calculations"
+    },
+    {
+        "id": 3,
+        "title": "Flamingo Social Studies",
+        "author": "Ahmed Ibrahim",
+        "grade": 4,
+        "subject": "Social Studies",
+        "content": "Social Studies teaches about the environment, politics and social relationships"
+    },
+    {
+        "id": 4,
+        "title": "In Scope Integrated Science",
+        "author": "K.D Twumasi",
+        "grade": 4,
+        "subject": "Science",
+        "content": "Science teaches about science"
+    },
+    {
+        "id": 5,
+        "title": "Story book",
+        "author": "Pka",
+        "grade": "0",
+        "subject": "story",
+        "content": "Paka is very bored out of his mind"
+    }
+]

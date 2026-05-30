@@ -1,0 +1,13 @@
+#Centralizes all error utilities
+
+import traceback
+
+def show_error(error):
+    """Displays detailed error"""
+
+    print("\n==== ERROR ====")
+    print(error)
+
+    print("\n==== TRACEBACK ====")
+    traceback.print_exc()
+    
