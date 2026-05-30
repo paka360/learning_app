@@ -36,8 +36,8 @@ def initialize_database():
             subject TEXT,
             title TEXT,
             author TEXT,
-            content TEXT,
-            uploaded_by TEXT)
+            uploaded_by TEXT,
+            file_path TEXT)
 
     """)
 
@@ -66,7 +66,7 @@ def initialize_database():
                    book_id INTEGER,
                    title TEXT,
                    grade TEXT,
-                   content TEXT,
+                   file_path TEXT,
                    UNIQUE(username, book_id) )
                    """)
     
@@ -163,7 +163,7 @@ def get_user(username):
     connection.close()
     return user
 
-def create_book(subject, title, author, content,grade, uploaded_by):
+def create_book(subject, title, author,grade, uploaded_by, file_path):
     """Adds a new book to the database"""
 
     connection = connect_database()
@@ -172,9 +172,9 @@ def create_book(subject, title, author, content,grade, uploaded_by):
     try:
         cursor.execute("""
                    INSERT INTO books
-                   (subject, title, author, content, grade, uploaded_by)
+                   (subject, title, author, grade, uploaded_by,file_path)
                    VALUES (?,?,?,?,?,?)
-                   """, (subject, title, author, content, grade, uploaded_by))
+                   """, (subject, title, author, grade, uploaded_by,file_path))
     
         connection.commit()
 
@@ -298,7 +298,7 @@ def get_reading_history():
     connection.close()
     return history
 
-def create_download(username, book_id, title, grade, content):
+def create_download(username, book_id, title, grade, file_path):
     """Saves downloaded books of users"""
 
     connection = connect_database()
@@ -318,9 +318,9 @@ def create_download(username, book_id, title, grade, content):
     
         cursor.execute("""
                    INSERT INTO downloads
-                   (username, book_id, title, grade, content)
+                   (username, book_id, title, grade, file_path)
                    VALUES (?,?,?,?,?)
-                   """, (username, book_id, title, grade, content))
+                   """, (username, book_id, title, grade, file_path))
         connection.commit()
         return True
 
@@ -332,14 +332,15 @@ def create_download(username, book_id, title, grade, content):
         connection.close()
 
 
-def get_downloads():
+def get_downloads(username):
     """Loads the downloads of users from the database"""
 
     connection = connect_database()
     cursor = connection.cursor()
     cursor.execute("""
                    SELECT * FROM downloads
-                   """)
+                   WHERE username = ?
+                   """, (username))
     downloads = cursor.fetchall()
     connection.close()
 
@@ -472,14 +473,15 @@ def link_parent_student(parent_username, student_username):
                    """, (parent_username, student_username))
         
         connection.commit()
+        return True
 
     except sqlite3.Error as error:
         print("Database error")
         print(error)
+        return False
 
     finally:
         connection.close()
-        return True 
     
 
 def get_parent_students():

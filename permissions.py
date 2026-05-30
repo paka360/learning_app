@@ -17,6 +17,19 @@ def is_parent(user):
 
     return user["role"] == "parent"
 
+def get_children(parent_username):
+    """Returns students linked account to the specified parent user"""
+
+    relationships = get_parent_students()
+
+    children =[]
+    
+    for relationship in relationships:
+        if relationship["parent_username"] == parent_username:
+            children.append(relationship["student_username"])
+
+    return children
+
 
 def has_grade_access(user, resource_grade):
     """Checks id user has grade access"""

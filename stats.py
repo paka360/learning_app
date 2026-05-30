@@ -1,4 +1,6 @@
 from database import get_logs
+from database import link_parent_student
+from permissions import get_children
 
 def show_stats(user):
     """Allows users to view their stats on the app"""
@@ -29,6 +31,12 @@ def parent_view_stats(user):
     """Allows parents view the stats of their wards"""
 
     progress = get_logs()
+    
+    children = get_children(user["username"])
+
+    if len(children) == 0:
+        print("Link account of child to view their stats.")
+        return
 
     print("\n ==== CHILD MONITOR ====")
 

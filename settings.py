@@ -1,15 +1,43 @@
 from database import get_user, create_user, link_parent_student, get_parent_students, update_password
 from validation import validate_number, validate_password
 from auth import verify_password, hash_password
+from permissions import get_children
+
 
 
 def view_profile(user):
     """Allows users to view their profile"""
 
+    children = get_children(user["username"])
+
     print("\n====PROFILE====")
 
-    print("Username: "+ user["username"].title())
-    print("Role: "+ user["role"].title())
+    if user["role"] == "student":
+        print("Username: "+ user["username"].title())
+        print("Role: "+ user["role"].title())
+        print("Grade: " + user["grade"])
+        print("\nBooks read: " )
+        print("Books downloaded: ")
+        print("Average Score: ")
+
+
+    elif user["role"] == "parent":
+        print("Username: "+ user["username"].title())
+        print("Role: "+ user["role"].title())
+        print("\nLinked Accounts: ")
+        for child in children:
+            print(child.title())
+            
+
+    elif user["role"] == "teacher":
+        print("Username: "+ user["username"].title())
+        print("Role: "+ user["role"].title())
+        print("Grade: " + user["grade"]) 
+        print("Books uploaded: ")
+        print("Books downloaded: ")
+        print("Books read: ")   
+        
+
 
 def change_password(user):
     """Allows users to change their password"""
