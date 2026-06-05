@@ -210,27 +210,27 @@ def parent_home(user):
         if validate_number(choice) == False:
             print("Input should be a number")
         
-        if choice == '1':
+        if choice == "1":
             print("==== LINK ACCOUNT ====")
             student_username = input("Enter the username of your ward: ").lower().strip()
 
             if parent_has_children(user["username"], student_username):
                 print("Account already linked. ")
-                return
+                
             
             else:
                 success = link_parent_student(user["username"], student_username)
                 if success:
                     print("Account linked successfully")
-                    return
+                    
             
                 else:
                     link_parent_student(user["username"], student_username)
-                    print("Account link failed")
-                    return
+                    print("Student not found")
+                    
                 
     
-        if choice == "2":
+        elif choice == "2":
             print(get_children(user["username"]))
 
         elif choice == "3":   

@@ -340,7 +340,7 @@ def get_downloads(username):
     cursor.execute("""
                    SELECT * FROM downloads
                    WHERE username = ?
-                   """, (username))
+                   """, (username,))
     downloads = cursor.fetchall()
     connection.close()
 
@@ -455,6 +455,17 @@ def link_parent_student(parent_username, student_username):
     cursor = connection.cursor()
 
     try:
+        cursor.execute("""
+                       SELECT * FROM users
+                       WHERE username = ?
+                       AND role = 'student'
+                       """, (student_username,))
+        student = cursor.fetchone()
+
+        if student is None:
+            return False
+        
+
         cursor.execute("""
                    SELECT * FROM parent_students
                    WHERE parent_username = ?

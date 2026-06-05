@@ -86,7 +86,7 @@ def download_book(user):
 def display_downloads(user):
     """Displays downloaded books to users"""
 
-    downloads = get_downloads()
+    downloads = get_downloads(user["username"])
 
     print("\n====DOWNLOADED BOOKS====")
     found = False
@@ -103,7 +103,7 @@ def display_downloads(user):
 def read_book(user):
     """Allows users to read the contents of their books"""
 
-    books = get_downloads()
+    books = get_downloads(user["username"])
 
     print("\n===READ BOOK===")
 
@@ -325,6 +325,6 @@ def choose_file():
     file_path = askopenfilename(title = "Select a book", filetypes = [("Supported File", "*.pdf *.txt. *.docx *.pptx"), ("All Files", "*.*")])
 
     root.destroy()
-    return file_path        
+    return file_path    
         
 
