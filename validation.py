@@ -21,12 +21,15 @@ def validate_username(username):
     
     return True
 
-def validate_password(password):
+def validate_password(password, cpassword):
     """Validates the password users set for their accounts"""
 
     if len(password) < 4:
         return False
     
+    if password != cpassword:
+        return False
+
     return True
 
 

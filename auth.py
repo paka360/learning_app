@@ -2,7 +2,7 @@
 from database import create_user, get_user, get_parent_students, link_parent_student
 import bcrypt
 from permissions import is_parent, is_student, is_teacher
-from validation import validate_grade, validate_password, validate_role, validate_username
+from validation import validate_grade, validate_password, validate_role, validate_username, validate_number
 
 
 def hash_password(password):
@@ -26,39 +26,43 @@ def signup():
     """Allows users sign up and create an account"""
 
     print("\n===== SIGNUP ====")
-    username = input("Choose username: ").strip().lower()
-    if validate_username(username) == False:
-        return
-
-    role = input("Choose role (student/teacher/parent): ").lower().strip()
-    if validate_role(role) == False:
-        print("Invalid role")
-        return
-
-    grade = ""
-
-    if role == "student" or role == "teacher":
-        grade = input("Enter your grade/class: ").strip().lower()
-        if validate_grade(grade) == False:
-            print("Invalid grade")
-            return
-
-
-
-    password = input("Set password: ").strip()
-    cpassword = input("Confirm password: ").strip()
-
-    if validate_password(password) == False:
-        print("Password too weak")
-        return
+    while True:
+        username = input("Choose username: ").strip().lower()
+        if validate_username(username) == False:
+            print("Try again ")
+        else:
+            break
     
-    if len(password) >= 4 and password == cpassword:
-        password = hash_password(password)
-        create_user(username, password, role, grade)
-        print("Sign up completed")
+    while True:
+        role = input("Choose role \n1. Student\n2. Teacher\n3. Parent\nSelect: ").lower().strip()
+        if validate_number(role) == False:
+            print("\nTry again")      
+        else:
+            break
 
-    else:
-        print("Make sure your password is at least 4 characters long and is the same in both fields")
+    while True:
+        grade = ""
+        if role == "1" or role == "2":
+            grade = input("Enter your grade/class: ").strip().lower()
+            if validate_grade(grade) == False:
+                print("Invalid grade")
+            else:
+                break
+
+    while True:
+        password = input("Set password: ").strip()
+        cpassword = input("Confirm password: ").strip()
+
+        if validate_password(password,cpassword) == False:
+            print("Make sure your password is at least 4 characters long and is the same in both fields")
+
+    
+        else:
+            password = hash_password(password)
+            create_user(username, password, role, grade)
+            print("Sign up completed")
+            break
+            
     
 
 def login():
@@ -73,7 +77,7 @@ def login():
         return None
     
     if verify_password(password, user["password"]) == False:
-        print("Incorrect password")
+        print("Incorrect username or password")
         return None
 
     print("Login successful") 
