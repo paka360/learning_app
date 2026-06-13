@@ -1,4 +1,4 @@
-from database import create_book, search_book, get_books,create_favorites, get_favorites, create_reading_history, get_reading_history, get_downloads, create_download, track_activity
+from database import create_book, search_book, get_books,create_favorites, get_favorites, create_reading_history, get_reading_history, get_downloads, create_download, track_activity, delete_upload, get_teacher_analytics
 from permissions import has_grade_access, teacher_qualified
 from validation import safe_int
 import os
@@ -27,14 +27,20 @@ def display_books(user):
     print("\n ==== BOOK SUBJECTS ====")
     for i, subject in enumerate(subjects):
         print(str(i + 1) + ". " + subject)
+    
+    while True:
+        try:
+            choice = safe_int(input("\nSelect subject ID: "))
+            if choice > len(subjects) or choice < 0:
+                print("Invalid input")
 
-    try:
-        choice = safe_int(input("\nSelect subject ID: "))
-        selected_subject = subjects[choice - 1]
+            else:
+                selected_subject = subjects[choice - 1]
+                break
 
-    except ValueError:
-        print("Invalid subject")
-        return
+        except ValueError:
+            print("Invalid subject")
+            
     
 
     print("\n---AVAILABLE BOOKS---")
@@ -211,6 +217,7 @@ def view_uploads(user):
 
     if found == False:
         print("No uploads")
+        return False
 
 
 def add_favorites(user):
@@ -295,23 +302,26 @@ def recommend_books(user):
 
 
 def delete_book(user):
-    """Allows teachers to their uploads"""
+    """Allows teachers to delete their uploads"""
 
-    view_uploads(user)
     try: 
+
+        if view_uploads(user) == False:
+            return
+        
         book_id = safe_int(input("\nEnter book ID to delete: "))
 
         if book_id == None:
             print("Invalid ID")
             return
         
-        success = delete_book(book_id, user["username"])
+        success = delete_upload(book_id, user["username"])
 
         if success:
             print("Book deleted successfully")
 
         else:
-            print("Deletion failed")
+            print("Book not found")
 
     except ValueError as error:
         print(error)
@@ -328,3 +338,16 @@ def choose_file():
     return file_path    
         
 
+def show_teacher_analytics(user):
+    """Displays teacher analytics dashboard"""
+
+    data = get_teacher_analytics(user["username"])
+
+    print("\n==== TEACHER ANALYTICS ====")
+    print("Books Uploaded: ", data["books_uploaded"])
+    print("Quizzes Created: ", data["quizzes_uploaded"])
+    print("Total Quiz Attempts: ", data["total_attempts"])
+    print("Average Score: ",str(data["average_score"]) + "%")
+
+    print("Best Performing Quiz: ", data["best_quiz"])
+    print("Worst Peforming Quiz: ", data["worst_quiz"])

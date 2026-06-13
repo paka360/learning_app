@@ -75,7 +75,8 @@ def initialize_database():
                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                    subject TEXT,
                    grade TEXT,
-                   title TEXT)
+                   title TEXT,
+                   uploaded_by TEXT)
                    """)
     
         cursor.execute("""CREATE TABLE IF NOT EXISTS questions (
@@ -346,16 +347,16 @@ def get_downloads(username):
 
     return downloads
 
-def create_quiz(subject, title, grade):
+def create_quiz(subject, title, grade, uploaded_by):
     """Creates a quiz """
 
     connection = connect_database()
     cursor = connection.cursor()
     cursor.execute("""
                    INSERT INTO quizzes
-                   (subject, title, grade)
-                   VALUES (?,?,?)
-                   """,(subject, title, grade))
+                   (subject, title, grade, uploaded_by)
+                   VALUES (?,?,?,?)
+                   """,(subject, title, grade, uploaded_by))
     connection.commit()
     quiz_id = cursor.lastrowid
     connection.close()
@@ -394,6 +395,21 @@ def get_quizzes():
     cursor.execute("""
                    SELECT * FROM quizzes
                    """)
+    
+    quizzes = cursor.fetchall()
+    connection.close()
+    return quizzes
+
+def get_teacher_quizzes(username):
+    """Loads the quizzes available"""
+
+    connection = connect_database()
+    cursor = connection.cursor()
+    
+    cursor.execute("""
+                   SELECT * FROM quizzes
+                   WHERE uploaded_by = ?
+                   """, (username,))
     
     quizzes = cursor.fetchall()
     connection.close()
@@ -443,6 +459,20 @@ def get_quiz_results():
     cursor.execute("""
                    SELECT * FROM quiz_results
                    """)
+    
+    results = cursor.fetchall()
+    connection.close()
+    return results
+
+def get_quiz_results_teacher(quiz_title):
+    """Loads the attempts of a quiz for the teacher"""
+
+    connection = connect_database()
+    cursor = connection.cursor()
+    cursor.execute("""
+                   SELECT * FROM  quiz_results
+                   WHERE quiz_title = ?
+                   """, (quiz_title,))
     
     results = cursor.fetchall()
     connection.close()
@@ -582,6 +612,9 @@ def delete_upload(book_id, username):
                    AND uploaded_by = ?
                    """, (book_id, username))
         
+        if cursor.rowcount == 0:
+            return False
+        
         connection.commit()
         return True
     
@@ -616,3 +649,130 @@ def update_book(book_id, username, new_title, new_content):
     
     finally:
         connection.close()
+
+
+def delete_quiz(quiz_id, username):
+    """Allows users to delete quizzes they uploaded"""
+
+    connection = connect_database()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("""
+                   DELETE FROM quizzes
+                   WHERE id = ?
+                   AND uploaded_by = ?
+                   """, (quiz_id, username))
+        
+        if cursor.rowcount == 0:
+            return False
+        
+        connection.commit()
+        return True
+    
+    except sqlite3.Error as error:
+        print(error)
+        return False
+    
+    finally:
+        connection.close()
+
+def get_teacher_analytics(username):
+    """Loads basic analytics for a teacher"""
+
+    connection = connect_database()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+                   SELECT COUNT(*) FROM books
+                   WHERE uploaded_by = ?
+                   """, (username,))
+    
+    books_uploaded = cursor.fetchone()[0]
+
+    cursor.execute("""
+                   SELECT COUNT(*) FROM quizzes
+                   WHERE uploaded_by = ?
+                   """, (username,))
+    
+    quizzes_uploaded = cursor.fetchone()[0]
+
+    cursor.execute("""
+                   SELECT title FROM quizzes 
+                   WHERE uploaded_by = ?
+                   """, (username,))
+    
+    quizzes = cursor.fetchall()
+
+    quiz_titles = [quiz["title"] for quiz in quizzes]
+
+    total_attempts = 0
+    total_score = 0
+    total_possible = 0
+
+    if quiz_titles:
+        placeholders = ",".join(["?"] * len(quiz_titles))
+
+        query = f"""
+        SELECT score, total FROM  quiz_results
+        WHERE quiz_title IN ({placeholders})
+        """
+        cursor.execute(query, quiz_titles)
+        results = cursor.fetchall()
+        quiz_stats = {}
+
+        for result in results:
+            title = result["quiz_title"]
+
+            if title not in quiz_stats:
+                quiz_stats[title] = {
+                    "attempts": 0,
+                    "score": 0,
+                    "total": 0,
+                }
+
+            quiz_stats[title]["attempts"] += 1
+            quiz_stats[title]["score"] += result["score"]
+            quiz_stats[title]["total"] += result["total"]
+
+            total_attempts += 1
+            total_score += result["score"]
+            total_possible += result["total"]
+
+        best_quiz = None
+        worst_quiz = None
+
+        best_avg = -1
+        worst_avg = 101
+
+        for title, data in quiz_stats.items():
+            avg = (data["score"] / data["total"]) * 100
+
+            if avg > best_avg:
+                best_avg = avg
+                best_quiz = title
+
+            if avg < worst_avg:
+                worst_avg = avg
+                worst_quiz = title
+
+
+
+    else:
+        results = []
+
+    connection.close()
+
+    if total_possible == 0:
+        average = 0
+    else:
+        average = round((total_score/total_possible) * 100, 2)
+
+    return {
+        "books_uploaded": books_uploaded,
+        "quizzes_uploaded": quizzes_uploaded,
+        "total_attempts": total_attempts,
+        "average_score": average,
+        "best_quiz": best_quiz,
+        "worst_quiz": worst_quiz
+    }

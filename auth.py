@@ -34,15 +34,22 @@ def signup():
             break
     
     while True:
-        role = input("Choose role \n1. Student\n2. Teacher\n3. Parent\nSelect: ").lower().strip()
-        if validate_number(role) == False:
+        choice = input("Choose role \n1. Student\n2. Teacher\n3. Parent\nSelect: ").lower().strip()
+        if validate_number(choice) == False:
             print("\nTry again")      
         else:
+            if choice == "1":
+                role = "student"
+            elif choice == "2":
+                role = "teacher"
+            elif choice == "3":
+                role = "parent"
             break
 
-    while True:
-        grade = ""
-        if role == "1" or role == "2":
+    
+    grade = ""
+    if role == "student" or role == "teacher":
+        while True:
             grade = input("Enter your grade/class: ").strip().lower()
             if validate_grade(grade) == False:
                 print("Invalid grade")

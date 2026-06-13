@@ -1,10 +1,10 @@
 #Home Screen Module
 
-from books import display_books, display_downloads, download_book, read_book, upload_book, view_favorites, add_favorites, recommend_books,continue_reading, view_uploads
+from books import display_books, display_downloads, download_book, read_book, upload_book, view_favorites, add_favorites, recommend_books,continue_reading, view_uploads,delete_book, show_teacher_analytics
 from search import search_book
 from stats import show_stats, parent_view_stats
 from settings import settings_menu
-from quiz import take_quiz, view_quiz_history, create_quiz_set
+from quiz import take_quiz, view_quiz_history, create_quiz_set,delete_quiz_set, view_quiz_results
 from validation import validate_number
 from permissions import get_children, parent_has_children
 from database import link_parent_student
@@ -96,9 +96,8 @@ def student_home(user):
 
                 else: 
                     print("Invalid input")
-                    break
+                    
             
-
         elif choice == "2":
             take_quiz(user)
     
@@ -130,9 +129,11 @@ def teacher_home(user):
     while True: 
         print("\n1. Upload Book")
         print("2. Create Quiz")
-        print("3. Manage Classes")
-        print("4. Library")
-        print("5. Back")
+        print("3. Delete Quiz")
+        print("4. Manage Classes")
+        print("5. Library")
+        print("6. Analytics")
+        print("7. Back")
 
         choice = input("Select: ").strip()
         if validate_number(choice) == False:
@@ -144,20 +145,25 @@ def teacher_home(user):
 
         elif choice == "2":
             create_quiz_set(user)
-        
+               
         elif choice == "3":
-            print("\n==== MANAGE CLASSES ====")
-
+            delete_quiz_set(user)
+            
         elif choice == "4":
+            print("\n==== MANAGE CLASSES ====")
+            view_quiz_results(user)   
+        
+        elif choice == "5":
 
             while True:
                 print("\n==== LIBRARY ====")
-                print("1. View uploaded books")
-                print("2. View Recommended books")
-                print("3. Download books")
-                print("4. View Downloads")
-                print("5. Read book")
-                print("6. Back")
+                print("1. View uploads")
+                print("2. Delete uploads")
+                print("3. View Recommended books")
+                print("4. Download books")
+                print("5. View Downloads")
+                print("6. Read book")
+                print("7. Back")
 
 
                 option = input("Select: ").strip()
@@ -169,24 +175,31 @@ def teacher_home(user):
                     view_uploads(user)
 
                 elif option == "2":
-                    display_books(user)
+                    delete_book(user)
         
                 elif option == "3":
-                    download_book(user)
+                    display_books(user)
             
                 elif option == "4":
-                   display_downloads(user)
+                   download_book(user)
 
                 elif option == "5":
-                    read_book(user)
+                    display_downloads(user)
 
                 elif option == "6":
+                    read_book(user)
+
+                elif option == "7":
                     break
 
                 else:
                     print("Invalid input")
-        
-        elif choice == "5":
+            
+
+        elif choice == "6":
+            show_teacher_analytics(user)
+
+        elif choice == "7":
             break
 
         else:
@@ -231,7 +244,12 @@ def parent_home(user):
                 
     
         elif choice == "2":
-            print(get_children(user["username"]))
+            children = get_children(user["username"])
+            
+            print("\n==== LINKED ACCOUNTS ====")
+
+            for i, child in enumerate(children):
+                print(str(i +1) +  ". " + child)
 
         elif choice == "3":   
             parent_view_stats(user)

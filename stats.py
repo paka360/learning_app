@@ -40,7 +40,13 @@ def parent_view_stats(user):
 
     print("\n ==== CHILD MONITOR ====")
 
-    child_username = input("Enter child username: ").lower().strip()
+    while True:
+        child_username = input("Enter child username: ").lower().strip()
+        if child_username not in children:
+            print("Enter a valid linked username.")
+
+        else:
+            break
 
     book_downloads = 0
     books_read = 0
