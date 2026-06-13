@@ -4,7 +4,7 @@ from books import display_books, display_downloads, download_book, read_book, up
 from search import search_book
 from stats import show_stats, parent_view_stats
 from settings import settings_menu
-from quiz import take_quiz, view_quiz_history, create_quiz_set,delete_quiz_set, view_quiz_results
+from quiz import take_quiz, view_quiz_history, create_quiz_set,delete_quiz_set, view_quiz_results, show_quiz_breakdown
 from validation import validate_number
 from permissions import get_children, parent_has_children
 from database import link_parent_student
@@ -130,10 +130,11 @@ def teacher_home(user):
         print("\n1. Upload Book")
         print("2. Create Quiz")
         print("3. Delete Quiz")
-        print("4. Manage Classes")
-        print("5. Library")
-        print("6. Analytics")
-        print("7. Back")
+        print("4. Show quiz Analytics")
+        print("5. Manage Classes")
+        print("6. Library")
+        print("7. Analytics")
+        print("8. Back")
 
         choice = input("Select: ").strip()
         if validate_number(choice) == False:
@@ -148,12 +149,15 @@ def teacher_home(user):
                
         elif choice == "3":
             delete_quiz_set(user)
-            
+        
         elif choice == "4":
+            show_quiz_breakdown(user)
+            
+        elif choice == "5":
             print("\n==== MANAGE CLASSES ====")
             view_quiz_results(user)   
         
-        elif choice == "5":
+        elif choice == "6":
 
             while True:
                 print("\n==== LIBRARY ====")
@@ -196,10 +200,10 @@ def teacher_home(user):
                     print("Invalid input")
             
 
-        elif choice == "6":
+        elif choice == "7":
             show_teacher_analytics(user)
 
-        elif choice == "7":
+        elif choice == "8":
             break
 
         else:

@@ -1,4 +1,4 @@
-from database import create_question, create_quiz, get_quiz_results, get_quizzes, get_questions, create_quiz_results, delete_quiz, get_teacher_quizzes, get_quiz_results_teacher
+from database import create_question, create_quiz, get_quiz_results, get_quizzes, get_questions, create_quiz_results, delete_quiz, get_teacher_quizzes, get_quiz_results_teacher, get_quiz_results_by_title
 from validation import validate_number,safe_int
 
 
@@ -203,3 +203,71 @@ def view_quiz_results(user):
         print("Student: " + result["username"].title())
         print("Score: " + str(result["score"])+ "/" +str(result["total"]))
 
+
+def show_quiz_breakdown(user):
+    """Shows student performance for a selected quiz"""
+
+    quizzes = get_teacher_quizzes(user["username"])
+
+    if not quizzes:
+        print("No quizzes found")
+        return
+    
+    print("\n==== YOUR QUIZZES ====")
+    
+    for quiz in quizzes:
+        print(str(quiz["id"] + ". " + quiz["title"]))
+    
+    quiz_id = safe_int(input("\nEnter quiz ID: "))
+
+    selected = None
+    for quiz in quizzes:
+        if quiz["id"] == quiz_id:
+            selected = quiz
+            break
+
+    if not selected:
+        print("Quiz not found")
+        return
+    
+    results = get_quiz_results_by_title(selected["title"])
+
+    if not results:
+        print("No attempts yet")
+        return
+    
+    print("\n====  QUIZ BREAKDOWN: " + selected["title"].title() + "====\n")
+
+    total_score = 0
+    total_possible = 0
+    highest = -1
+    lowest = 101
+
+    for result in results:
+
+        score = result["score"]
+        total = result["total"]
+
+        print(result["username"] + " - " + str(score / total))
+
+        total_score += score
+        total_possible += total
+
+        percent = (score / total) * 100
+
+        if percent > highest:
+            highest = percent
+
+        if percent < lowest:
+            lowest = percent
+
+
+    attempts = len(results)
+
+    avg = (total_score / total_possible) * 100
+
+    print("\n--- SUMMARY ---")
+    print("Attempts:", attempts)
+    print("Average:", round(avg, 2), "%")
+    print("Highest:", round(highest, 2), "%")
+    print("Lowest:", round(lowest, 2), "%")

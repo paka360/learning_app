@@ -776,3 +776,20 @@ def get_teacher_analytics(username):
         "best_quiz": best_quiz,
         "worst_quiz": worst_quiz
     }
+
+
+def get_quiz_results_by_title(quiz_title):
+    """Loads all student attempts for a selected quiz"""
+
+    connection = connect_database()
+    cursor = connection.cursor()
+    cursor.execute("""
+                   SELECT username, score, total
+                   FROM quiz_results
+                   WHERE quiz_title = ?
+                   """, (quiz_title,))
+    
+    results = cursor.fetchall()
+    connection.close()
+
+    return results
