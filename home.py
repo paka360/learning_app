@@ -1,6 +1,6 @@
 #Home Screen Module
 
-from books import display_books, display_downloads, download_book, read_book, upload_book, view_favorites, add_favorites, recommend_books,continue_reading, view_uploads,delete_book, show_teacher_analytics
+from books import display_books, display_downloads, download_book, read_book, upload_book, view_favorites, add_favorites, recommend_books,continue_reading, view_uploads,delete_book
 from search import search_book
 from stats import show_stats, parent_view_stats
 from settings import settings_menu
@@ -8,6 +8,7 @@ from quiz import take_quiz, view_quiz_history, create_quiz_set,delete_quiz_set, 
 from validation import validate_number
 from permissions import get_children, parent_has_children
 from database import link_parent_student
+from analytics import show_teacher_analytics, show_student_intelligence
 
 
 def home(user):
@@ -110,6 +111,7 @@ def student_home(user):
 
         elif choice == "5":
             show_stats(user)
+            show_student_intelligence(user["username"])
 
         elif choice == "6":
             settings_menu(user)

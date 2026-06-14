@@ -216,7 +216,7 @@ def show_quiz_breakdown(user):
     print("\n==== YOUR QUIZZES ====")
     
     for quiz in quizzes:
-        print(str(quiz["id"] + ". " + quiz["title"]))
+        print(str(quiz["id"]) + ". " + quiz["title"])
     
     quiz_id = safe_int(input("\nEnter quiz ID: "))
 

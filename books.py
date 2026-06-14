@@ -1,6 +1,6 @@
 from database import create_book, search_book, get_books,create_favorites, get_favorites, create_reading_history, get_reading_history, get_downloads, create_download, track_activity, delete_upload, get_teacher_analytics
 from permissions import has_grade_access, teacher_qualified
-from validation import safe_int
+from validation import safe_int, validate_number
 import os
 import subprocess
 from tkinter import Tk
@@ -30,12 +30,15 @@ def display_books(user):
     
     while True:
         try:
-            choice = safe_int(input("\nSelect subject ID: "))
-            if choice > len(subjects) or choice < 0:
+            choice = input("\nSelect subject ID: ")
+            if validate_number(choice) == False:
+                print("\nTry again") 
+
+            elif int(choice) > len(subjects) or int(choice) < 0:
                 print("Invalid input")
 
             else:
-                selected_subject = subjects[choice - 1]
+                selected_subject = subjects[int(choice) - 1]
                 break
 
         except ValueError:
@@ -338,16 +341,3 @@ def choose_file():
     return file_path    
         
 
-def show_teacher_analytics(user):
-    """Displays teacher analytics dashboard"""
-
-    data = get_teacher_analytics(user["username"])
-
-    print("\n==== TEACHER ANALYTICS ====")
-    print("Books Uploaded: ", data["books_uploaded"])
-    print("Quizzes Created: ", data["quizzes_uploaded"])
-    print("Total Quiz Attempts: ", data["total_attempts"])
-    print("Average Score: ",str(data["average_score"]) + "%")
-
-    print("Best Performing Quiz: ", data["best_quiz"])
-    print("Worst Peforming Quiz: ", data["worst_quiz"])

@@ -793,3 +793,102 @@ def get_quiz_results_by_title(quiz_title):
     connection.close()
 
     return results
+
+def get_student_intelligence(username):
+    """
+    Builds a performance profile for a student.
+
+    This analyzes quiz results and determines:
+    - Subject performance
+    - Strongest subject
+    - Weakest subject
+    - Overall average
+    """
+
+    connection = connect_database()
+    cursor = connection.cursor()
+
+    # We join quiz_results with quizzes to access subject information
+    cursor.execute("""
+        SELECT 
+            qr.score,
+            qr.total,
+            q.subject
+        FROM quiz_results qr
+        JOIN quizzes q
+        ON qr.quiz_title = q.title
+        WHERE qr.username = ?
+    """, (username,))
+
+    results = cursor.fetchall()
+
+    connection.close()
+
+    # If student has no quiz history
+    if not results:
+        return {
+            "average": 0,
+            "strongest_subject": None,
+            "weakest_subject": None,
+            "subject_breakdown": {}
+        }
+
+    # Stores subject-level performance
+    subject_data = {}
+
+    total_score = 0
+    total_possible = 0
+
+    # Process each quiz attempt
+    for r in results:
+
+        subject = r["subject"]
+        score = r["score"]
+        total = r["total"]
+
+        # Initialize subject if not seen before
+        if subject not in subject_data:
+            subject_data[subject] = {
+                "score": 0,
+                "total": 0,
+                "attempts": 0
+            }
+
+        # Aggregate performance per subject
+        subject_data[subject]["score"] += score
+        subject_data[subject]["total"] += total
+        subject_data[subject]["attempts"] += 1
+
+        # Global totals
+        total_score += score
+        total_possible += total
+
+    # Compute overall average
+    average = round((total_score / total_possible) * 100, 2)
+
+    # Determine strongest and weakest subjects
+    strongest = None
+    weakest = None
+    best_avg = -1
+    worst_avg = 101
+
+    for subject, data in subject_data.items():
+
+        subject_avg = (data["score"] / data["total"]) * 100
+
+        # Track strongest subject
+        if subject_avg > best_avg:
+            best_avg = subject_avg
+            strongest = subject
+
+        # Track weakest subject
+        if subject_avg < worst_avg:
+            worst_avg = subject_avg
+            weakest = subject
+
+    return {
+        "average": average,
+        "strongest_subject": strongest,
+        "weakest_subject": weakest,
+        "subject_breakdown": subject_data
+    }
